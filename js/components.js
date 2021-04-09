@@ -413,7 +413,19 @@ function loadVue() {
 				v-bind:class="{ longUpg: true, can: player[layer].unlocked, locked: !player[layer].unlocked }">{{tmp[layer].buyables.sellAllText ? tmp[layer].buyables.sellAllText : "Sell All"}}</button>
 	`
 	})
-
+  Vue.component('shop', {
+    props: ['layer', 'data'],
+    template: `
+      <div>
+      <blank></blank>
+      <h2>The Small Number Shop</h2><br>
+      Hello! Another visitor. This will be a very long journey for you, but in the meantime, feel free to buy some stuff from me!<br>
+      <blank></blank>
+      <row layer="c" :data="[['upgrade', 15], ['upgrade', 16]]">
+      </row>
+      </div>
+    `
+  })
 	// SYSTEM COMPONENTS
 
 	Vue.component('tab-buttons', systemComponents['tab-buttons'])

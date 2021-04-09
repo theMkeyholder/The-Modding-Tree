@@ -1,6 +1,6 @@
 let modInfo = {
-	name: "The ??? Tree",
-	id: "mymod",
+	name: "The Cascading Tree",
+	id: "cascaeder",
 	author: "nobody",
 	pointsName: "points",
 	discordName: "",
@@ -13,7 +13,7 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "0.0",
-	name: "Literally nothing",
+	name: "",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -41,7 +41,12 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(0)
+  if(hasUpgrade("c", 11)) gain = gain.add(1)
+  if(hasUpgrade("c", 12)) gain = gain.mul(2)
+  if(hasUpgrade("c", 13)) gain = gain.mul(2)
+  if(hasUpgrade("c", 15)) gain = gain.mul(3)
+  gain = gain.mul(Decimal.pow(2,getBuyableAmount("c", 11)))
 	return gain
 }
 
