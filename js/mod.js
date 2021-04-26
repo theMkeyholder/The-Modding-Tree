@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "The Brrrrrr Tree",
+	name: "The Inflation Tree",
 	id: "br6tree",
 	author: "FlamemasterNXF",
-	pointsName: "Inflations",
+	pointsName: "inflations",
 	discordName: "My Discord server!",
 	discordLink: "https://discord.gg/Js93DSjBAY",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
@@ -41,6 +41,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
+	if (hasUpgrade("z", 11)) gain = gain.times(upgradeEffect("z", 11))
 	return gain
 }
 
