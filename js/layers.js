@@ -69,5 +69,16 @@ addLayer("z", {
             cost: new Decimal(25),
         },
         //collum 2
+        12: {
+            title: "Continue Inflating",
+            description: "DO NOT BUY THIS",
+            effect(){
+                return new Decimal(player.z.upgrades.length) * 2
+            },
+            effectDisplay() {
+                return `${format(upgradeEffect("z", 31))}x`
+            },
+            cost: new Decimal(25),
+        },
     }
 })
