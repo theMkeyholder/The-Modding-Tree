@@ -26,13 +26,15 @@ addLayer("z", {
     ],
     layerShown(){return true},
     upgrades: {
-        rows: 2,
-        cols: 2,
+        rows: 3,
+        cols: 3,
+        //collum 1
         11: {
             title: "Begin to Inflate",
             description: "Inflations boost their own gain",
             effect(){
-                if (hasUpgrade("z", 21)){
+                //return new Decimal(1.1).sqrt(player.points).times(upgradeEffect("z", 21)).plus(1)
+                if (hasUpgrade("z", 21)) {
                     return new Decimal(1.1).sqrt(player.points).times(upgradeEffect("z", 21)).plus(1)
                 }
                 else{
@@ -54,6 +56,29 @@ addLayer("z", {
                 return `${format(upgradeEffect("z", 21))}x`
             },
             cost: new Decimal(10),
+        },
+        31: {
+            title: "Spike",
+            description: "Inflation gain is multiplied by 2x for each upgrade you have",
+            effect(){
+                return new Decimal(player.z.upgrades.length) * 2
+            },
+            effectDisplay() {
+                return `${format(upgradeEffect("z", 31))}x`
+            },
+            cost: new Decimal(25),
+        },
+        //collum 2
+        31: {
+            title: "Continue Inflating",
+            description: "Inflations boost Speed gain",
+            effect(){
+                return 
+            },
+            effectDisplay() {
+                return `${format(upgradeEffect("z", 31))}x`
+            },
+            cost: new Decimal(25),
         },
     }
 })
