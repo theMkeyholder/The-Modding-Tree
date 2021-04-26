@@ -3,8 +3,8 @@ let modInfo = {
 	id: "br6tree",
 	author: "FlamemasterNXF",
 	pointsName: "Inflations",
-	discordName: "",
-	discordLink: "",
+	discordName: "My Discord server!",
+	discordLink: "https://discord.gg/Js93DSjBAY",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
 	
 	offlineLimit: 96,  // In hours
@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "v1",
-	name: "where does this text show up hmm",
+	num: "1",
+	name: "if you're reading this hi I hope you're having a good day",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
