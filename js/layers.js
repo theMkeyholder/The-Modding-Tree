@@ -69,16 +69,18 @@ addLayer("z", {
             cost: new Decimal(25),
         },
         //collum 2
+        /*
         31: {
             title: "Continue Inflating",
             description: "Inflations boost Speed gain",
             effect(){
-                return 
+                return
             },
             effectDisplay() {
                 return `${format(upgradeEffect("z", 31))}x`
             },
             cost: new Decimal(25),
         },
+         */
     }
 })
