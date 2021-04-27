@@ -82,14 +82,14 @@ addLayer("z", {
             cost: new Decimal(25),
         },
         //collum 2
-        12: {
+        13: {
             title: "Continue Inflating",
             description: "Inflations boost their own gain massively",
             effect(){
                 return new Decimal(0.2).sqrt(player.points).plus(1)
             },
             effectDisplay() {
-                return `^${format(upgradeEffect("z", 12))}`
+                return `^${format(upgradeEffect("z", 13))}`
             },
             cost: new Decimal(50),
         },
@@ -116,6 +116,18 @@ addLayer("z", {
                 }
             },
             cost: new Decimal(500),
+        },
+        //Middle
+        12: {
+            title: "True Inflation",
+            description: "Inflation gain is multiplied by [Begin's Effect^Continue's Effect]",
+            effect(){
+                return upgradeEffect("z", 11).pow(upgradeEffect("z", 13))
+            },
+            effectDisplay() {
+                return `${format(upgradeEffect("z", 12))}x`
+            },
+            cost: new Decimal(2000),
         },
     }
 })
