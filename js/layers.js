@@ -14,7 +14,7 @@ addLayer("z", {
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
+        let mult = new Decimal(1)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -50,7 +50,12 @@ addLayer("z", {
             title: "Inflating Speed",
             description: "Begin effect is multiplied by your Speed amount",
             effect(){
-                return player.z.points.times(0.1).plus(1)
+                if (player.z.points.greaterThan(0)){
+                    return player.z.points.log(10).plus(10)
+                }
+                else{
+                    return new Decimal(10)
+                }
             },
             effectDisplay() {
                 return `${format(upgradeEffect("z", 21))}x`
@@ -71,14 +76,14 @@ addLayer("z", {
         //collum 2
         12: {
             title: "Continue Inflating",
-            description: "DO NOT BUY THIS",
+            description: "Inflations boost their own gain massively",
             effect(){
-                return new Decimal(player.z.upgrades.length) * 2
+                return new Decimal(0.2).sqrt(player.points).plus(1)
             },
             effectDisplay() {
-                return `${format(upgradeEffect("z", 31))}x`
+                return `^${format(upgradeEffect("z", 12))}`
             },
-            cost: new Decimal(25),
+            cost: new Decimal(50),
         },
     }
 })
