@@ -51,7 +51,11 @@ addLayer("z", {
             description: "Begin effect is multiplied by your Speed amount",
             effect(){
                 if (player.z.points.greaterThan(0)){
-                    return player.z.points.log(10).plus(10)
+                    if (hasUpgrade("z", 22))
+                    return player.z.points.log(2).plus(10)
+                    else {
+                        return player.z.points.log(10).plus(10)
+                    }
                 }
                 else{
                     return new Decimal(10)
@@ -66,7 +70,11 @@ addLayer("z", {
             title: "Spike",
             description: "Inflation gain is multiplied by 2x for each upgrade you have",
             effect(){
-                return new Decimal(player.z.upgrades.length) * 2
+                if (hasUpgrade("z", 32))
+                return new Decimal(player.z.upgrades.length) * 10
+                else{
+                    return new Decimal(player.z.upgrades.length) * 2
+                }
             },
             effectDisplay() {
                 return `${format(upgradeEffect("z", 31))}x`
@@ -84,6 +92,30 @@ addLayer("z", {
                 return `^${format(upgradeEffect("z", 12))}`
             },
             cost: new Decimal(50),
+        },
+        22: {
+            title: "Speed Bump",
+            description: "Inflating Speed's formula now uses log(2)",
+            effectDisplay() {
+                if (hasUpgrade("z", 22))
+                return `Unlocked`
+                else{
+                    return 'Locked'
+                }
+            },
+            cost: new Decimal(300),
+        },
+        32: {
+            title: "Just a Small Boost",
+            description: "Spike is now 10x for each Upgrade",
+            effectDisplay() {
+                if (hasUpgrade("z", 32))
+                    return `Unlocked`
+                else{
+                    return 'Locked'
+                }
+            },
+            cost: new Decimal(500),
         },
     }
 })
