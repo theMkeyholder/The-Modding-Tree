@@ -12,12 +12,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1",
-	name: "if you're reading this hi I hope you're having a good day",
+	num: "1.1",
+	name: "Acceleration",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v1</h3><br>
+	<h3>v1.1</h3><br>
 		- I'm not using this lol.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -45,6 +45,7 @@ function getPointGen() {
 	if (hasUpgrade("z", 31)) gain = gain.times(upgradeEffect("z", 31))
 	if (hasUpgrade("z", 13)) gain = gain.pow(upgradeEffect("z", 13))
 	if (hasUpgrade("z", 12)) gain = gain.times(upgradeEffect("z", 12))
+	if (hasUpgrade("a", 11)) gain = gain.times(upgradeEffect("a", 11))
 	return gain
 }
 
