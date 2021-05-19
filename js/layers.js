@@ -38,7 +38,7 @@ addLayer("z", {
             description: "Inflations boost their own gain",
             effect(){
                 if (hasUpgrade("a", 13)){
-                    return player.points.log(10).pow(5).plus(1)
+                    return player.points.pow(0.25).times(1.1).plus(1)
                 }
                 if (hasUpgrade("z", 21)) {
                     return new Decimal(1.1).sqrt(player.points).times(upgradeEffect("z", 21)).plus(1)
@@ -57,9 +57,6 @@ addLayer("z", {
             title: "Inflating Speed",
             description: "Begin effect is multiplied by your Speed amount",
             effect(){
-                if (hasUpgrade("a", 13)){
-                    return new Decimal(1)
-                }
                 if (player.z.points.greaterThan(0)){
                     if (hasUpgrade("z", 22))
                     return player.z.points.log(2).plus(10)
@@ -72,12 +69,7 @@ addLayer("z", {
                 }
             },
             effectDisplay() {
-                if (hasUpgrade("a", 13)){
-                    return `DISABLED`
-                }
-                else{
-                    return `${format(upgradeEffect("z", 21))}x`
-                }
+                return `${format(upgradeEffect("z", 21))}x`
             },
             cost: new Decimal(10),
         },
@@ -101,7 +93,7 @@ addLayer("z", {
             title: "Continue Inflating",
             description: "Inflations boost their own gain massively",
             effect(){
-                return new Decimal(0.2).sqrt(player.points).plus(1)
+                return player.points.plus(1).log10().plus(1).log10().plus(1).pow(0.75)
             },
             effectDisplay() {
                 return `^${format(upgradeEffect("z", 13))}`
@@ -137,10 +129,18 @@ addLayer("z", {
             title: "True Inflation",
             description: "Inflation gain is multiplied by [Begin's Effect^Continue's Effect]",
             effect(){
+                if (hasUpgrade("a", 13)){
+                    return new Decimal(1)
+                }
                 return upgradeEffect("z", 11).pow(upgradeEffect("z", 13))
             },
             effectDisplay() {
-                return `${format(upgradeEffect("z", 12))}x`
+                if (hasUpgrade("a", 13)){
+                    return `DISABLED`
+                }
+                else{
+                    return `${format(upgradeEffect("z", 12))}x`
+                }
             },
             cost: new Decimal(2000),
         },
@@ -227,12 +227,12 @@ addLayer("a", {
         },
         13: {
             unlocked(){return hasMilestone("a", 2)},
-            fullDisplay: "<h3>Begin Again</h3><br>Begin uses a much better formula BUT disable Inflating Speed (it's worth it)<br><br>Cost: 300 Acceleration Energy and 5e7 Speed",
+            fullDisplay: "<h3>Begin Again</h3><br>Begin uses a much better formula AND Begin's Effect is applied TWICE (the second time weakend and after all other buffs) BUT disable True Inflation (it's worth it)<br><br>Cost: 300 Acceleration Energy and 5e7 Speed",
             canAfford(){return (player.z.points.greaterThan(5e7) && player.a.points.greaterThan(299))},
             pay() {
                 player.z.points.subtract(5e7)
                 player.a.points.subtract(300)
-            }
+            },
         },
     }
 })
