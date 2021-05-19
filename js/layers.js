@@ -26,7 +26,7 @@ addLayer("z", {
     branches: ["a"],
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "z", description: "Z: Reset your Inflations for Speed", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "s", description: "S: Reset your Inflations for Speed", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     layerShown(){return true},
     upgrades: {
@@ -212,7 +212,7 @@ addLayer("a", {
             effectDisplay(){
                 return `${format(upgradeEffect("a", 11))}x`
             },
-            cost: new Decimal(1),
+            cost: new Decimal(2),
         },
         12: {
             title: "Accelerating Speed",
@@ -223,15 +223,15 @@ addLayer("a", {
             effectDisplay() {
                 return `${format(upgradeEffect("a", 12))}x`
             },
-            cost: new Decimal(1),
+            cost: new Decimal(2),
         },
         13: {
             unlocked(){return hasMilestone("a", 2)},
-            fullDisplay: "<h3>Begin Again</h3><br>Begin uses a much better formula AND Begin's Effect is applied TWICE (the second time weakend and after all other buffs) BUT disable True Inflation (it's worth it)<br><br>Cost: 300 Acceleration Energy and 5e7 Speed",
-            canAfford(){return (player.z.points.greaterThan(5e7) && player.a.points.greaterThan(299))},
+            fullDisplay: "<h3>Begin Again</h3><br>Begin uses a much better formula AND Begin's Effect is applied TWICE (the second time weakend and after all other buffs) BUT disable True Inflation (it's worth it)<br><br>Cost: 500 Acceleration Energy and 5e7 Speed",
+            canAfford(){return (player.z.points.greaterThan(5e7) && player.a.points.greaterThan(499))},
             pay() {
-                player.z.points.subtract(5e7)
-                player.a.points.subtract(300)
+                player.z.points = player.z.points.subtract(5e7)
+                player.a.points = player.a.points.subtract(500)
             },
         },
     }
