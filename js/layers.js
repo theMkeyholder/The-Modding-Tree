@@ -41,10 +41,10 @@ addLayer("z", {
                     return player.points.log(10).pow(5).plus(1)
                 }
                 if (hasUpgrade("z", 21)) {
-                    return new Decimal(1.1).sqrt(player.points).times(upgradeEffect("z", 21)).plus(1)
+                    return new Decimal(1.1).times(player.points.sqrt()).times(upgradeEffect("z", 21)).plus(1)
                 }
                 else{
-                    return new Decimal(1.1).sqrt(player.points).plus(1)
+                    return new Decimal(1.1).times(player.points.sqrt()).plus(1)
                 }
 
             },
@@ -204,7 +204,7 @@ addLayer("a", {
             title: "Accelerating Inflation",
             description: "Acceleration Energy boosts Inflations gain",
             effect(){
-                if (player.a.points > 0)
+                if (player.a.points.gt(0))
                     return player.a.points.log(3).pow(2).plus(3)
                 else
                     return new Decimal(3)
@@ -230,8 +230,8 @@ addLayer("a", {
             fullDisplay: "<h3>Begin Again</h3><br>Begin uses a much better formula BUT disable Inflating Speed (it's worth it)<br><br>Cost: 300 Acceleration Energy and 5e7 Speed",
             canAfford(){return (player.z.points.greaterThan(5e7) && player.a.points.greaterThan(299))},
             pay() {
-                player.z.points.subtract(5e7)
-                player.a.points.subtract(300)
+                player.z.points = player.z.points.sub(5e7)
+                player.a.points = player.a.points.sub(300)
             }
         },
     }
