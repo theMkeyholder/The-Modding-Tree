@@ -5,11 +5,13 @@ function save() {
 function startPlayerBase() {
 	return {
 		tab: layoutInfo.startTab,
-		navTab: (layoutInfo.showTree ? "tree-tab" : "none"),
+		navTab: (layoutInfo.showTree ? layoutInfo.startNavTab : "none"),
 		time: Date.now(),
 		autosave: true,
 		notify: {},
 		msDisplay: "always",
+		theme: null,
+		hqTree: false,
 		offlineProd: true,
 		versionType: modInfo.id,
 		version: VERSION.num,
@@ -85,6 +87,7 @@ function getStartLayerData(layer) {
 	layerdata.achievements = [];
 	layerdata.challenges = getStartChallenges(layer);
 	layerdata.grid = getStartGrid(layer);
+	layerdata.prevTab = ""
 
 	return layerdata;
 }
