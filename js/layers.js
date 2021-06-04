@@ -1,166 +1,134 @@
-addLayer("z", {
-    name: "Speed", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
+addLayer("t", {
+    name: "Trolls", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "T", // This appears on the layer's node. Default is the id with the first letter capitalized
     position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    startData() { return {
-        unlocked: true,
-		points: new Decimal(0),
-    }},
-    color: "#fc7b03",
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#918156",
     requires: new Decimal(10), // Can be a function that takes requirement increases into account
-    resource: "speed", // Name of prestige currency
-    baseResource: "inflations", // Name of resource prestige is based on
-    baseAmount() {return player.points}, // Get the current amount of baseResource
+    resource: "Trolled People", // Name of prestige currency
+    baseResource: "Oil", // Name of resource prestige is based on
+    baseAmount() {
+        return player.points
+    }, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
-        if (hasUpgrade("a", 12)) mult = mult.times(upgradeEffect("a", 12))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    passiveGeneration(){return hasMilestone("a", 0)},
-    autoUpgrade(){return hasMilestone("a", 1)},
-    branches: ["a"],
+    passiveGeneration(){return hasMilestone("u", 0)},
+    branches: ["u", "e", "m"],
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "s", description: "S: Reset your Inflations for Speed", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {
+            key: "t", description: "T: Reset your Oil for Trolled People", onPress() {
+                if (canReset(this.layer)) doReset(this.layer)
+            }
+        },
     ],
-    layerShown(){return true},
+    layerShown() {
+        return true
+    },
     upgrades: {
         rows: 3,
         cols: 3,
-        //collum 1
         11: {
-            title: "Begin to Inflate",
-            description: "Inflations boost their own gain",
-            effect(){
-                if (hasUpgrade("a", 13)){
-                    return player.points.pow(0.25).times(1.1).plus(1)
+            title: "Cover yourself in Oil",
+            description: "Trolled People multiply your Oil gain",
+            effect() {
+                if (hasUpgrade("u", 12)){
+                    return new Decimal(1)
                 }
-                if (hasUpgrade("z", 21)) {
-                    return new Decimal(1.1).sqrt(player.points).times(upgradeEffect("z", 21)).plus(1)
+                if (player.t.points.gte(1)){
+                    if (hasUpgrade("u", 11)){
+                        return player.t.points.log(2).plus(2)
+                    }
+                    if (hasUpgrade("t", 13)){
+                        return player.t.points.log(1.1).plus(2)
+                    }
+                    else{
+                        return player.t.points.log(2).plus(2)
+                    }
                 }
-                else{
-                    return new Decimal(1.1).sqrt(player.points).plus(1)
-                }
-
+                else
+                    return new Decimal(2)
             },
             effectDisplay() {
-                return `${format(upgradeEffect("z", 11))}x`
+                if (hasUpgrade("u", 12)){
+                    return 'DISABLED'
+                }
+                return `${format(upgradeEffect("t", 11))}x`
             },
             cost: new Decimal(2),
         },
-        21: {
-            title: "Inflating Speed",
-            description: "Begin effect is multiplied by your Speed amount",
-            effect(){
-                if (player.z.points.greaterThan(0)){
-                    if (hasUpgrade("z", 22))
-                    return player.z.points.log(2).plus(10)
-                    else {
-                        return player.z.points.log(10).plus(10)
-                    }
+        12: {
+            title: "Oil Duplication",
+            description: "Oil multiplies Oil gain",
+            effect() {
+                if (hasUpgrade("m", 11)){
+                    return new Decimal(1)
                 }
-                else{
-                    return new Decimal(10)
-                }
+                if (player.points.gte(1))
+                    return player.points.sqrt().plus(1)
+                else
+                    return new Decimal(1)
             },
             effectDisplay() {
-                return `${format(upgradeEffect("z", 21))}x`
+                if (hasUpgrade("m", 11)){
+                    return 'DISABLED'
+                }
+                return `${format(upgradeEffect("t", 12))}x`
             },
             cost: new Decimal(10),
         },
-        31: {
-            title: "Spike",
-            description: "Inflation gain is +2x for each upgrade bought",
-            effect(){
-                if (hasUpgrade("z", 32))
-                return new Decimal(player.z.upgrades.length) * 10
-                else{
-                    return new Decimal(player.z.upgrades.length) * 2
-                }
-            },
-            effectDisplay() {
-                return `${format(upgradeEffect("z", 31))}x`
-            },
-            cost: new Decimal(25),
-        },
-        //collum 2
         13: {
-            title: "Continue Inflating",
-            description: "Inflations boost their own gain massively",
-            effect(){
-                return player.points.plus(1).log10().plus(1).log10().plus(1).pow(0.75)
-            },
+            title: "Advanced Oil Covering Techniques",
+            description: "Cover Yourself in Oil uses a better formula",
             effectDisplay() {
-                return `^${format(upgradeEffect("z", 13))}`
+                if (hasUpgrade("u", 11)){
+                    return 'DISABLED'
+                }
+                if (hasUpgrade("t", 13))
+                return `Unlocked`
+                else
+                    return `Locked`
             },
             cost: new Decimal(50),
         },
-        22: {
-            title: "Speed Bump",
-            description: "Inflating Speed's formula now uses log(2)",
-            effectDisplay() {
-                if (hasUpgrade("z", 22))
-                return `Unlocked`
-                else{
-                    return 'Locked'
-                }
-            },
-            cost: new Decimal(300),
-        },
         32: {
-            title: "Just a Small Boost",
-            description: "Spike is now +10x for each upgrade",
-            effectDisplay() {
-                if (hasUpgrade("z", 32))
-                    return `Unlocked`
-                else{
-                    return 'Locked'
-                }
-            },
-            cost: new Decimal(500),
-        },
-        //Middle
-        12: {
-            title: "True Inflation",
-            description: "Inflation gain is multiplied by [Begin's Effect^Continue's Effect]",
-            effect(){
-                if (hasUpgrade("a", 13)){
-                    return new Decimal(1)
-                }
-                return upgradeEffect("z", 11).pow(upgradeEffect("z", 13))
-            },
-            effectDisplay() {
-                if (hasUpgrade("a", 13)){
-                    return `DISABLED`
-                }
-                else{
-                    return `${format(upgradeEffect("z", 12))}x`
-                }
-            },
-            cost: new Decimal(2000),
+            title: "Reveal your Oil",
+            description: "Reveal your mass amounts of Trolls and huge supplies of Oil",
+            cost: new Decimal(200),
         },
     }
 })
-addLayer("a", {
-    name: "Acceleration", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "A", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    startData() { return {
-        unlocked: true,
-        points: new Decimal(0),
-    }},
-    color: "#fcba03",
-    requires: new Decimal(1e4), // Can be a function that takes requirement increases into account
-    resource: "Acceleration Energy", // Name of prestige currency
-    baseResource: "speed", // Name of resource prestige is based on
-    baseAmount() {return player.z.points}, // Get the current amount of baseResource
+addLayer("u", {
+    name: "USA", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "USA", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#fc2803",
+    requires: new Decimal(10), // Can be a function that takes requirement increases into account
+    resource: "Anti-Trolls", // Name of prestige currency
+    baseResource: "Oil", // Name of resource prestige is based on
+    baseAmount() {
+        return player.points
+    }, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
+    exponent: 0.2, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
         return mult
@@ -168,71 +136,385 @@ addLayer("a", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    row: 1, // Row the layer is in on the tree (0 is the first row)
-    hotkeys: [
-        {key: "a", description: "A: Reset your Speed for Acceleration Energy", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
-    ],
-    layerShown(){return true},
+    passiveGeneration(){return hasUpgrade("t", 32)},
+    canReset() {
+        return false;
+    },
+    branches: [],
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        if (!hasUpgrade("m", 13))
+        return hasUpgrade("t", 32)
+        else
+            return false
+    },
+    infoboxes: {
+        lore: {
+            title: "USA ",
+            body() { return "The USA has discovered your massive amounts of Oil and attacked. Anti-Trolls now flood your Oil drilling operation. These Anti-Trolls will disable things and damage your production, but your Trolled People may find ways to make these damages boost other things..." },
+        },
+    },
     milestones: {
         0: {
-            requirementDescription: "Now we're getting somewhere! | 5 Accel Energy",
+            requirementDescription: "50 Anti-Trolls",
             effectDescription() {
-                return "You gain 100% of your Speed gained on reset every tick";
+                return "You gain 100% of your Trolled People gained on reset every tick but USA Upgrade 2 is now log(2)";
             },
-            done() { return player.a.points.gte(5)}
+            done() {
+                if (hasUpgrade("u", 12))
+                return player.u.points.gte(50)
+            },
+            unlocked() {return hasUpgrade("u", 12)}
         },
         1: {
-            requirementDescription: "Progress | 50 Accel Energy",
+            requirementDescription: "300 Anti-Trolls",
             effectDescription() {
-                return "You autobuy Speed upgrades";
+                return "Unlock a new USA Upgrade";
             },
-            done() { return player.a.points.gte(50)}
-        },
-        2: {
-            requirementDescription: "Where is the Inflation? | 200 Accel Energy",
-            effectDescription() {
-                return "Unlock a new Acceleration Energy upgrade";
+            done() {
+                if (hasUpgrade("u", 12))
+                    return player.u.points.gte(300)
             },
-            done() { return player.a.points.gte(200)}
+            unlocked() {return hasUpgrade("u", 12)}
         },
     },
     upgrades: {
         rows: 3,
         cols: 3,
-        //collum 1
         11: {
-            title: "Accelerating Inflation",
-            description: "Acceleration Energy boosts Inflations gain",
-            effect(){
-                if (player.a.points > 0)
-                    return player.a.points.log(3).pow(2).plus(3)
+            title: "Invasion",
+            description: "Disable Oil Upgrade 3 but unlock a new Layer",
+            cost: new Decimal(100),
+            effectDisplay() {
+                if (hasUpgrade("u", 11))
+                    return `Unlocked`
                 else
-                    return new Decimal(3)
-            },
-            effectDisplay(){
-                return `${format(upgradeEffect("a", 11))}x`
-            },
-            cost: new Decimal(2),
+                    return `Locked`
+            }
         },
         12: {
-            title: "Accelerating Speed",
-            description: "Acceleration Energy boosts speed gain",
-            effect(){
-                return player.a.points.sqrt().times(1.1).plus(5)
+            fullDisplay: "<h3>Anti-Trolling Protocols</h3><br>Divide Oil gain by the log10 of Troll Energy (after all other effects), and reset Oil and Anti-Trolls, but unlock USA Milestones<br><br>Requires: 300 Anti-Trolls",
+            canAfford(){return (player.u.points.gte(300))},
+            pay() {
+              player.points = player.points.sub(player.points)
+              player.u.points = player.u.points.sub(player.u.points)
             },
             effectDisplay() {
-                return `${format(upgradeEffect("a", 12))}x`
+                if (hasUpgrade("u", 12))
+                    return `Unlocked`
+                else
+                    return `Locked`
             },
-            cost: new Decimal(2),
         },
         13: {
-            unlocked(){return hasMilestone("a", 2)},
-            fullDisplay: "<h3>Begin Again</h3><br>Begin uses a much better formula AND Begin's Effect is applied TWICE (the second time weakend and after all other buffs) BUT disable True Inflation (it's worth it)<br><br>Cost: 500 Acceleration Energy and 5e7 Speed",
-            canAfford(){return (player.z.points.greaterThan(5e7) && player.a.points.greaterThan(499))},
+            unlocked(){return hasMilestone("u", 1)},
+            fullDisplay: "<h3>Oil Rig Takeovers</h3><br>The second Oil Upgrade is applied again, this time before all other effects, reset Oil and Anti-Trolls, and set Troll Energy to 10, but unlock a new Layer<br><br>Requires: 400 Anti-Trolls",
+            canAfford(){return (player.u.points.gte(400))},
             pay() {
-                player.z.points = player.z.points.subtract(5e7)
-                player.a.points = player.a.points.subtract(500)
+                player.points = player.points.sub(player.points)
+                player.u.points = player.u.points.sub(player.u.points)
+                player.e.points = new Decimal(10)
+            },
+            effectDisplay() {
+                if (hasUpgrade("u", 13))
+                    return `Unlocked`
+                else
+                    return `Locked`
             },
         },
+    }
+})
+addLayer("e", {
+    name: "Troll Energy", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "TE", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#0089d9",
+    requires: new Decimal(1000), // Can be a function that takes requirement increases into account
+    resource: "Troll Energy", // Name of prestige currency
+    baseResource: "Oil", // Name of resource prestige is based on
+    branches: ["m"],
+    update() {
+      if (hasUpgrade("m", 11)){
+          addPoints("e", player.t.points.log(10))
+      }
+    },
+    baseAmount() {
+        return player.points
+    }, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.3,
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    passiveGeneration(){return hasUpgrade("u", 11)},
+    canReset() {
+        return false;
+    },
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        if (!hasUpgrade("m", 13))
+        return hasUpgrade("u", 11)
+        else
+            return false
+    },
+    effect(){
+        return player.e.points.sqrt()
+    },
+    effectDescription() {
+        return `which multiplies Oil gain by ${format(tmp.e.effect)}x`
+    }
+})
+addLayer("m", {
+    name: "META OIL", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "MO", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#fb00ff",
+    requires: new Decimal(9.6e9696969696969696), // Can be a function that takes requirement increases into account
+    resource: "Meta Oil", // Name of prestige currency
+    baseResource: "???", // Name of resource prestige is based on
+    branches: [],
+    baseAmount() {
+        return new Decimal(0)
+    }, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0,
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    canReset() {
+        return false;
+    },
+    branches: [],
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        return hasUpgrade("u", 13)
+    },
+    shouldNotify() {
+        return true;
+    },
+    glowColor: "#fb00ff",
+    milestones: {
+        0: {
+            requirementDescription: "1000 Oil",
+            effectDescription() {
+                return "ś̵̨̧̰̟͖̫̰̞̱̙̟̩̬͉̍̾̓͂͒ǝ̷̢̳̝͉̘͙͕̠̰͎̟̰̘̿̾̋̑̑̿̐͋̈́̕͠p̵̺̭͓͚͍̻̳͕̝͇͎̣̉̾̇̐̎͌̒̀ɐ̴̛͇̐͂͐̇̇͗̅̀̇̂̽́͝ɹ̴̨̤̤̰͚̹͔͔̅̊̈́̓͗͌̏̐̄̕͠ƃ̵͖̈́̆̂̔̓̄̍̕ḑ̸͇͕̳̮̰̲̮̲̝͉̮̝̻́̊͗ͅn̵̢̧̲̜̝͖̦͇͍͚͚͇̼͙̽̋̈́͋͒̓̾̀͑͆̕͜ʞ̴̺̭̺̯̱͈̫̰̪͍́͗̀͑̿͛͒̚̚͠͝ͅɔ̴̨̉̌̀̎̕͝ơ̷̡̢͈͔̹̼̹̐̊́̍̑̂͝l̷̡̦͕̫̼̭̭̘̯͍̪̠̎͑̏͌̍̾́̒͛ͅṷ̵̻̜̣͉̈́̀̋́̈́͗̓͘͠ņ̶̰̲͔̫͕͇͖̟̆̒̈̀̈́̏̀̀̔̅̎̚͝p̶̡̛̣̱̮̦̥͇̙͉̾̉̈́͑̈͘ͅų̸̡̻̰̙̤̝͕̉̈́͌̚ɐ̷̢͙̬͔̦̈́̽̊̂̋͊ͅḷ̴̨̗̣̮̗̙̾͂̌̾̈͐̍̕͝͝͠ͅᴉ̵͎͆͗̓͋̋̚o̷̟͔̰̺̫̮̩̓̀̒̉̊͌͂ɐ̴̢̟̪͚̣̲̝̥͉̼̤͕͇̠̓̈̈̉̀͝͝ʇ̵̟̫̰̘̜͍͇͈̱̳͔̈̍̿ǝ̷͉͇̠̓̅͗̓͛̒͂̒̂̎̏̓̚̕ɯ̵̢̛̦̰͇̜̲͉̬͇̘̤͗͋͗̋͂̇͛̃͌̈́̚͝͠ǝ̷̨̰̘̮͔̰́͊̒͑̒͗͛͊̅̆͘ư̶̧̨̹̣̮̥͉̳͉̲̖̥͌͗͗̆̾ͅô̴̩̗̫̥̼͉̖̩̝̻̿̂̈͒̈́̀͒̽͆̃̑̎͝͝";
+            },
+            done() {
+                if (hasUpgrade("u", 13))
+                    return player.points.gte(1000)
+            },
+            unlocked() {return hasUpgrade("u", 13)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        1: {
+            requirementDescription: "100 Oil",
+            effectDescription() {
+                return "ļ̷̳̳̳̻̓̀ᴉ̴͔̜̖͎͙̺̤̱͑̑̽͠ͅǫ̸̫̟̺̪͛̃̈́̍̀̌͗͗͆̄ɐ̶̛̫̣̱͓̗͚̗͕̲̻͎̎̈͜ͅʇ̴̨̯̯̲̱̬̱̗̇̇͂͊̍̓͠ǝ̶͎͋̚ɯ̴͚̻̳̭̮̫̹͔̗̀̆̈́͋͆͛̓̉̀͜ɹ̵̢̗̗͙͉͕̯̩̠̋̌́͋͜ǝ̵̘͖̫̖̅̊ɥ̵̡̜̗̘̪͙̣̰͉̫͖͈̰̃̀́̀̒͆̎̔̍̏̄̊̀ʇ̶̢̨̡̢̛͚̹͉̳̬̥̩̤̣͙̪̊̃̃̓̐̇͗́̌̓́͌͘͝ợ̸̦͆̒͋̐͋͝ṷ̷̡̥͔̹̩̟̪͓̖͍̥̭̲͚̿̿͒͐̈ɐ̷̰̟͒̈́̂̕͠p̴̲̾͊́̅͛u̸͓̞̝͈͕̖͖̯̜̘̮͆͌͌͊̓̂̎͝͝ɐ̴̨̝̮̘̱̙͕̱̖͓̦̐͑̔͊́̉̄̆͑̾̚̚͜͝͠ǝ̸̪̻͙̖̼̊̉́̏̔͊̄̕͘p̵̢̛̭̣̪̪̀̊̕ɐ̵̯̟̮̟̻̉́͐̚ɹ̵̛̤͎̺̜̫̦̼̂̂̋͛̅͐̍̿̃̈́́̚͜ͅƃ̸̡̢̡̨͈̼̣͕̔́̂̒̄̂̔̀͑̄͝͝͝d̵̛͓̰̗̗͙̝͓͚͕̟͉̘̥͎͋̏̒̈́̓̈ͅń̷̤̫̌̔͒̓͛ɹ̷̖̤̳̦̳̭̠͖͈̘̪͍͈̐̋̕͝ǝ̸̨̝͓̫̺̞̰̰̼̻̭̋̽̿́̚ͅɥ̵̛̹̞͚̤̣̱̗̲̾̇͑͒̌͑̕͠ʇ̸̨̬̯̦̗̪̰͔͇͙̅̽̎ͅǒ̵͙̙̩̫̜̣͔̪̮̭̩̽͐̃̾̎̕͝͠ų̷̢͍̟̤̞̟̯͚̝̹̗̙̆́̈́̑̉̄̔͒̌͠ɐ̴̧̛̛͍͓̥̮̹̺̼̼̙͚̱̯͍̓̅̏͋̔̏̍̋̚͝ʞ̶̨̦̜̹͚̫͕̬͚̙̬̳̹̯̉̉̆ɔ̷̢͙̘͖̩͍͓̲̳̳͇̘͙̍̀͑̈́͛̐͂̈́̚͘ố̵͕́̓͋̈́̋͆̈́̀̈́͆̚͝͠l̶̢̢͓̤̲͚̦̰̝͙̠̼͚͈̅̎̅͒̿̐̑̆̉͋̂̚͝ͅu̶̢̥̻͑͒͐̐̋̊̽̎͗̑́̀͗̚͝n̶̨̡̧͓͇̥͇̝̻̺͈̪͈̯̐͗͗̓̊̉̋̈́̌̉͘";
+            },
+            done() {
+                if (hasUpgrade("m", 11))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("u", 13)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        2: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        3: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        4: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        5: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        6: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        7: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        8: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        9: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        10: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        11: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+        12: {
+            requirementDescription: "100.",
+            effectDescription() {
+                return "Ǝ̴̧̠̠̟̘̰̳̹̗̙͇̻̥̆̄͋˥̵̡̭͕͇͈̘̇͂͘̕͜͜ͅƆ̶̢̨͔̟̙̩͉̮̲̠̭̹̉̈́͛̊̋͋̂̽́̿̏͆̆̅̔͜⅄̵̨͖͔̟̤̩̱̗̜͚͍̥̞͕̭̏̍͐̀Ɔ̸̧̰̮͍̙̦̠͙͚͕̱̭͔͊̊̂́͑̅͑͊͐͘͜͠Ǝ̶̥̗̯̐̈́͜Ḧ̵̥͕̬̮͚̻́┴̸̨̯̟̬͇̼͚̓";
+            },
+            done() {
+                if (hasUpgrade("m", 12))
+                    return player.points.gte(100)
+            },
+            unlocked() {return hasUpgrade("m", 12)},
+            onComplete(){player.m.points = player.m.points.plus(1)}
+        },
+    },
+    upgrades: {
+        rows: 3,
+        cols: 3,
+        11: {
+            unlocked(){return hasMilestone("m", 0)},
+            fullDisplay: "<h3>[Meta_Shift_01]</h3><br>Disable Oil Upgrade 2, reset Oil, and set Troll Energy and Trolled People to 10 but convert the log(10) of Trolled People to Troll Energy<br><br>Requires: 1 Meta Oil",
+            canAfford(){return (player.m.points.gte(1))},
+            pay() {
+                player.points = player.points.sub(player.points)
+                player.t.points = new Decimal(10)
+                player.e.points = new Decimal(10)
+            },
+            effectDisplay() {
+                if (hasUpgrade("m", 11))
+                    return `Unlocked`
+                else
+                    return `Locked`
+            }
+        },
+        12: {
+            unlocked(){return hasMilestone("m", 1)},
+            fullDisplay: "<h3>[Meta_Shift_02]</h3><br>Enter the Infinite Cycle<br><br>Requires: 2 Meta Oil",
+            canAfford(){return (player.m.points.gte(2))},
+            pay() {
+                player.points = player.points.sub(player.points)
+                player.t.points = new Decimal(10)
+                player.e.points = new Decimal(10)
+            },
+            effectDisplay() {
+                if (hasUpgrade("m", 12))
+                    return `Unlocked`
+                else
+                    return `Locked`
+            }
+        },
+        13: {
+            unlocked(){return hasMilestone("m", 12)},
+            fullDisplay: "<h3>UNLEASH THE CYCLE</h3><br><br>Requires: 13 Meta Oil",
+            canAfford(){return (player.m.points.gte(1))},
+            pay() {
+                player.points = new Decimal(1)
+                player.t.points = new Decimal(10)
+                player.e.points = new Decimal(10)
+            },
+        }
     }
 })

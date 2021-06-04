@@ -1,8 +1,8 @@
 let modInfo = {
-	name: "The Inflation Tree",
-	id: "br6tree",
+	name: "The Oil Tree",
+	id: "oiltree",
 	author: "FlamemasterNXF",
-	pointsName: "inflations",
+	pointsName: "Oil",
 	discordName: "My Discord server!",
 	discordLink: "https://discord.gg/Js93DSjBAY",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "Acceleration",
+	num: "1.0",
+	name: "Cover Yourself in Oil",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -41,12 +41,16 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade("z", 11)) gain = gain.times(upgradeEffect("z", 11))
-	if (hasUpgrade("z", 31)) gain = gain.times(upgradeEffect("z", 31))
-	if (hasUpgrade("z", 13)) gain = gain.pow(upgradeEffect("z", 13))
-	if (hasUpgrade("z", 12)) gain = gain.times(upgradeEffect("z", 12))
-	if (hasUpgrade("a", 11)) gain = gain.times(upgradeEffect("a", 11))
-	if (hasUpgrade("z", 11)) gain = gain.times((upgradeEffect("z", 11)).divideBy(2))
+	if (!hasUpgrade("m", 13)){
+		if (gain.gte(10)){if (hasUpgrade("u", 13)) {gain = gain.div(tmp.e.effect.log(2))}}
+		if (hasUpgrade("u", 11)) gain = gain.times(tmp.e.effect)
+		if (hasUpgrade("t", 11)) gain = gain.times(upgradeEffect("t", 11))
+		if (hasUpgrade("t", 12)) gain = gain.times(upgradeEffect("t", 12))
+		if (hasMilestone("u", 0))
+			if (hasUpgrade("u", 12)) {gain = gain.div(tmp.e.effect.log(2))}
+			else{if (hasUpgrade("u", 12)) gain = gain.div(tmp.e.effect.log(10))}
+	}
+	if (hasUpgrade("m", 13)) gain = gain.times(player.points.pow(2))
 	return gain
 }
 
