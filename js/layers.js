@@ -508,7 +508,7 @@ addLayer("m", {
         },
         13: {
             unlocked(){return hasMilestone("m", 12)},
-            fullDisplay: "<h3>UNLEASH THE CYCLE</h3><br><br>Requires: 13 Meta Oil",
+            fullDisplay: "<h3>U̷N̷L̵E̷A̷S̷H̵ ̶T̴H̸E̴ ̷C̶Y̸C̷L̸E̴</h3><br><br>Requires: 13 Meta Oil",
             canAfford(){return (player.m.points.gte(1))},
             pay() {
                 player.points = new Decimal(1)
