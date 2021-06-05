@@ -208,7 +208,7 @@ addLayer("u", {
         },
         13: {
             unlocked(){return hasMilestone("u", 1)},
-            fullDisplay: "<h3>Oil Rig Takeovers</h3><br>The second Oil Upgrade is applied again, this time before all other effects, reset Oil and Anti-Trolls, and set Troll Energy to 10, but unlock a new Layer<br><br>Requires: 400 Anti-Trolls",
+            fullDisplay: "<h3>Oil Rig Takeovers</h3><br>The second USA Upgrade is applied again, this time before all other effects, reset Oil and Anti-Trolls, and set Troll Energy to 10, but unlock a new Layer<br><br>Requires: 400 Anti-Trolls",
             canAfford(){return (player.u.points.gte(400))},
             pay() {
                 player.points = player.points.sub(player.points)
