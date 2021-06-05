@@ -158,7 +158,7 @@ addLayer("u", {
         0: {
             requirementDescription: "50 Anti-Trolls",
             effectDescription() {
-                return "You gain 100% of your Trolled People gained on reset every tick but USA Upgrade 2 is now log(2)";
+                return "You gain 100% of your Trolled People gained on reset every second but USA Upgrade 2 is now log(2)";
             },
             done() {
                 if (hasUpgrade("u", 12))
