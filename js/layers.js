@@ -309,9 +309,7 @@ addLayer("m", {
     layerShown() {
         return hasUpgrade("u", 13)
     },
-    shouldNotify() {
-        return true;
-    },
+    shouldNotify: true,
     glowColor: "#fb00ff",
     milestones: {
         0: {
