@@ -1,11 +1,11 @@
 let modInfo = {
-	name: "The Oil Tree",
-	id: "oiltree",
+	name: "The Flame Tree",
+	id: "flametree",
 	author: "FlamemasterNXF",
-	pointsName: "Oil",
+	pointsName: "???",
 	discordName: "My Discord server!",
 	discordLink: "https://discord.gg/Js93DSjBAY",
-	initialStartPoints: new Decimal (10), // Used for hard resets and new players
+	initialStartPoints: new Decimal (1), // Used for hard resets and new players
 	
 	offlineLimit: 1,  // In hours
 }
@@ -13,7 +13,7 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "1.0",
-	name: "Cover Yourself in Oil",
+	name: "???",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -41,16 +41,6 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (!hasUpgrade("m", 13)){
-		if (gain.gte(10)){if (hasUpgrade("u", 13)) {gain = gain.div(tmp.e.effect.log(2))}}
-		if (hasUpgrade("u", 11)) gain = gain.times(tmp.e.effect)
-		if (hasUpgrade("t", 11)) gain = gain.times(upgradeEffect("t", 11))
-		if (hasUpgrade("t", 12)) gain = gain.times(upgradeEffect("t", 12))
-		if (hasMilestone("u", 0))
-			if (hasUpgrade("u", 12)) {gain = gain.div(tmp.e.effect.log(2))}
-			else{if (hasUpgrade("u", 12)) gain = gain.div(tmp.e.effect.log(10))}
-	}
-	if (hasUpgrade("m", 13)) gain = gain.times(player.points.pow(2))
 	return gain
 }
 
