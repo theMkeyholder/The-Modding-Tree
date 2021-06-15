@@ -13,7 +13,7 @@ let modInfo = {
 // Set your version in num and name
 let VERSION = {
 	num: "1.0",
-	name: "nxf",
+	name: "Shards",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -41,20 +41,37 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	if (hasUpgrade("n", 33)) gain = gain.pow(upgradeEffect("n", 32))
-	if (hasUpgrade("n", 22)) gain = gain.times(upgradeEffect("n", 22))
-	if (hasUpgrade("n", 11)) gain = gain.plus(upgradeEffect("n", 11))
-	if (hasUpgrade("n", 12)) gain = gain.times(upgradeEffect("n", 12))
-	if (hasUpgrade("n", 21)) gain = gain.times(upgradeEffect("n", 21))
-	if (hasUpgrade("n", 31)) gain = gain.times(upgradeEffect("n", 31))
-	if (hasUpgrade("n", 32)) gain = gain.pow(upgradeEffect("n", 32))
-	if (!hasUpgrade("g", 21)){
-		if (hasUpgrade("g", 11)) gain = gain.times(upgradeEffect("g", 11))
+	if (!inChallenge("a", 11)){
+		if (hasUpgrade("n", 33)) gain = gain.pow(upgradeEffect("n", 32))
+		if (hasUpgrade("n", 22)) gain = gain.times(upgradeEffect("n", 22))
+		if (hasUpgrade("n", 11)) gain = gain.plus(upgradeEffect("n", 11))
+		if (hasUpgrade("n", 12)) gain = gain.times(upgradeEffect("n", 12))
+		if (hasUpgrade("n", 21)) gain = gain.times(upgradeEffect("n", 21))
+		if (hasUpgrade("n", 31)) gain = gain.times(upgradeEffect("n", 31))
+		if (hasUpgrade("n", 32)) gain = gain.pow(upgradeEffect("n", 32))
+		if (!hasUpgrade("g", 21)){
+			if (hasUpgrade("g", 11)) gain = gain.times(upgradeEffect("g", 11))
+		}
+		if (hasUpgrade("v", 11)) gain = gain.times(upgradeEffect("v", 11))
+		if (hasUpgrade("v", 12)) gain = gain.times(upgradeEffect("v", 12))
+		if (hasUpgrade("v", 13)) gain = gain.times(upgradeEffect("v", 13))
+		if (hasUpgrade("v", 14)) gain = gain.times(upgradeEffect("v", 14))
 	}
-	if (hasUpgrade("v", 11)) gain = gain.times(upgradeEffect("v", 11))
-	if (hasUpgrade("v", 12)) gain = gain.times(upgradeEffect("v", 12))
-	if (hasUpgrade("v", 13)) gain = gain.times(upgradeEffect("v", 13))
-	if (hasUpgrade("v", 14)) gain = gain.times(upgradeEffect("v", 14))
+	else {
+		gain = gain.plus(9)
+		if (hasUpgrade("n", 22)) gain = gain.div(upgradeEffect("n", 22))
+		if (hasUpgrade("n", 11)) gain = gain.sub(upgradeEffect("n", 11))
+		if (hasUpgrade("n", 12)) gain = gain.div(upgradeEffect("n", 12))
+		if (hasUpgrade("n", 21)) gain = gain.div(upgradeEffect("n", 21))
+		if (hasUpgrade("n", 31)) gain = gain.div(upgradeEffect("n", 31))
+		if (!hasUpgrade("g", 21)){
+			if (hasUpgrade("g", 11)) gain = gain.div(upgradeEffect("g", 11))
+		}
+		if (hasUpgrade("v", 11)) gain = gain.div(upgradeEffect("v", 11))
+		if (hasUpgrade("v", 12)) gain = gain.div(upgradeEffect("v", 12))
+		if (hasUpgrade("v", 13)) gain = gain.div(upgradeEffect("v", 13))
+		if (hasUpgrade("v", 14)) gain = gain.div(upgradeEffect("v", 14))
+	}
 	return gain
 }
 
@@ -64,6 +81,8 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
+	`Current Endgame: 1 Oddity`,
+	`The Real Game Begins after Completing the gwa Layer`
 ]
 
 // Determines when the game "ends"

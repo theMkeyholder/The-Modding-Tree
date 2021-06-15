@@ -25,13 +25,17 @@ addLayer("n", {
         return new Decimal(1)
     },
     passiveGeneration(){
-        if (!hasUpgrade("g", 21))
-            return hasMilestone("g",0) && (!hasUpgrade("g", 21))
-        else
-            return hasMilestone("v", 0)
+        if (!inChallenge("a", 11)) {
+            if (!hasUpgrade("g", 21))
+                return hasMilestone("g",0) && (!hasUpgrade("g", 21))
+            else
+                return hasMilestone("v", 0)
+        }
     },
     autoUpgrade(){
-        return hasMilestone("v", 0)
+        if (!inChallenge("a", 11)){
+            return hasMilestone("v", 0)
+        }
     },
     branches: ["g", "v", "a", "o"],
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -266,9 +270,12 @@ addLayer("g", {
             cost: 2
         },
         21: {
+            unlocked() {
+                return hasUpgrade("g", 13)
+            },
             title: "gwa",
             description: "gwa.",
-            cost: 3
+            cost: 1
         },
     }
 })
@@ -351,7 +358,10 @@ addLayer("v", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    branches: ["a"],
+    passiveGeneration() {
+        return hasUpgrade("as", 11);
+    },
+    branches: ["a", "as"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
@@ -362,6 +372,11 @@ addLayer("v", {
     ],
     layerShown() {
         return hasUpgrade("g", 21)
+    },
+    update(diff) {
+        if (player.v.points.equals(0) && hasUpgrade("g", 21)){
+            player.v.points = player.v.points.plus(1)
+        }
     },
     milestones: {
         0: {
@@ -377,18 +392,24 @@ addLayer("v", {
             title: "...",
             description: "Multiply Fire gain by the log(10) of Fire",
             effect(){
+                if (player.points.gte(1))
                 return new Decimal(player.points.log(10).plus(1))
+                else
+                    return new Decimal(1)
             },
             effectDisplay(){
                 return `${format(upgradeEffect("v", 11))}x`
             },
-            cost: 1
+            cost: 2
         },
         12: {
             title: "Endless.",
             description: "Multiply Fire gain by the log(2) of Fire",
             effect(){
+                if (player.points.gte(1))
                 return new Decimal(player.points.log(2).plus(1))
+                else
+                    return new Decimal(1)
             },
             effectDisplay(){
                 return `${format(upgradeEffect("v", 12))}x`
@@ -399,7 +420,14 @@ addLayer("v", {
             title: "Void",
             description: "Multiply Fire gain by the slog of Fire raised to the 2nd Power",
             effect(){
-                return new Decimal(player.points.slog().pow(2).plus(1))
+                if (hasUpgrade("a", 11))
+                    return new Decimal(1)
+                else{
+                    if (player.points.gte(1))
+                        return new Decimal(player.points.slog().pow(2).plus(1))
+                    else
+                        return new Decimal(1)
+                }
             },
             effectDisplay(){
                 return `${format(upgradeEffect("v", 13))}x`
@@ -407,10 +435,17 @@ addLayer("v", {
             cost: 300
         },
         14: {
-            title: "Void?",
+            title: "Void II",
             description: "Multiply Fire gain by the slog of Fire raised to the 5th Power",
             effect(){
-                return new Decimal(player.points.slog().pow(5).plus(1))
+                if (hasUpgrade("a", 11))
+                    return new Decimal(1)
+                else{
+                    if (player.points.gte(1))
+                        return new Decimal(player.points.slog().pow(5).plus(1))
+                    else
+                        return new Decimal(1)
+                }
             },
             effectDisplay(){
                 return `${format(upgradeEffect("v", 14))}x`
@@ -430,7 +465,7 @@ addLayer("a", {
         }
     },
     color: "#0074cd",
-    requires: new Decimal(1e40), // Can be a function that takes requirement increases into account
+    requires: new Decimal(1e37), // Can be a function that takes requirement increases into account
     resource: "Atoms", // Name of prestige currency
     baseResource: "Fire", // Name of resource prestige is based on
     resetDescription: "Reset for ",
@@ -438,16 +473,11 @@ addLayer("a", {
         return player.points
     }, // Get the current amount of baseResource
     canReset() {
-        return hasUpgrade("n", 42) && player.points.gte(1e40);
+        return hasUpgrade("n", 42) && player.points.gte(1e37);
     },
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
-    gainMult() {// Calculate the multiplier for main currency from bonuses
-        let mult = new Decimal(1)
-        return mult
-    },
-    gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+    base(){
+        return 1e9696
     },
     branches: [""],
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -465,17 +495,93 @@ addLayer("a", {
         rows: 4,
         cols: 3,
         11: {
-            title: "WIP",
-            description: ".",
-            effect(){
-                return new Decimal(player.n.upgrades.length).times(2).plus(1)
-            },
-            effectDisplay() {
-                return `+${format(upgradeEffect("n", 11))}`;
-            },
+            title: "Atomic Destruction",
+            description: "Annihilate Atoms, which deactivates Void and Void II, but unlock something new?",
             cost: 1
         },
+        12: {
+            unlocked(){
+                return hasChallenge("a", 11)
+            },
+            title: "Atomic Shards",
+            description: "Annihilate Annihilated Atoms, which unlocks 2 new Layers.",
+            cost: 0
+        },
+    },
+    challenges: {
+        11: {
+            unlocked(){return hasUpgrade("a", 11)},
+            name: "Atomic Annihilation",
+            challengeDescription: "Invert Upgrade Effects (Upgrades that raise something to a power are disabled), the Void Milestone is disabled, and reset EVERYTHING BEFORE ATOMS.",
+            goalDescription: "At least 4 NXF Upgrades",
+            rewardDescription: "...",
+            canComplete: function() {return new Decimal(player.n.upgrades.length).gte(4)},
+            onEnter() {
+                player.points = player.points.sub(player.points)
+                player.n.points = player.n.points.sub(player.n.points)
+                player.v.points = player.v.points.sub(player.v.points)
+                layerDataReset("v")
+            },
+            onExit() {
+                player.v.points = player.v.points.plus(1)
+            }
+        },
     }
+})
+addLayer("as", {
+    name: "Atomic Shards", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "AS", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#6814ff",
+    requires: new Decimal(10000), // Can be a function that takes requirement increases into account
+    resource: "Atomic Shards", // Name of prestige currency
+    baseResource: "Void Shards", // Name of resource prestige is based on
+    resetDescription: "Reset for ",
+    baseAmount() {
+        return player.v.points
+    }, // Get the current amount of baseResource
+    canReset() {
+        return false
+    },
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    branches: [""],
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        return hasUpgrade("a", 12)
+    },
+    effect(){
+        return new Decimal(player.as.points.plus(1).div(10))
+    },
+    effectDescription(){
+        return `dividing the Oddity requirement by ${format(tmp.as.effect)}`
+    },
+    update(diff) {
+        if (hasUpgrade("as", 11))
+        player.as.points = player.as.points.plus(player.v.points).div(100)
+    },
+    upgrades: {
+        rows: 4,
+        cols: 3,
+        11: {
+            title: "Atomic Annihilation",
+            description: "Gain 100% of Void Shard gain every second and convert 1% of your Void Shards to Atomic Shards every second",
+            cost: 0
+        },
+    },
 })
 addLayer("o", {
     name: "Oddities", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -488,13 +594,15 @@ addLayer("o", {
         }
     },
     color: "#8a8a8a",
-    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    requires() {
+        if (tmp.as.effect.gt(1))
+            return new Decimal(1e17).div(tmp.as.effect)
+        else
+            return new Decimal(1e17)
+    }, // Can be a function that takes requirement increases into account
     resource: "Oddities", // Name of prestige currency
     baseResource: "Extra Flame", // Name of resource prestige is based on
-    resetDescription: "[REQUIRES ???] Reset for ",
-    canReset() {
-        return hasUpgrade("n", 42) && player.n.points.gte(tmp.o.nextAt);
-    },
+    resetDescription: "Reset for ",
     baseAmount() {
         return player.n.points
     }, // Get the current amount of baseResource
@@ -517,7 +625,7 @@ addLayer("o", {
         },
     ],
     layerShown() {
-        return hasUpgrade("g", 21)
+        return hasUpgrade("a", 12)
     },
     upgrades: {
         rows: 4,
@@ -525,13 +633,7 @@ addLayer("o", {
         11: {
             title: "WIP",
             description: ".",
-            effect(){
-                return new Decimal(player.n.upgrades.length).times(2).plus(1)
-            },
-            effectDisplay() {
-                return `+${format(upgradeEffect("n", 11))}`;
-            },
-            cost: 1
+            cost: 1e969696969696
         },
     }
 })
