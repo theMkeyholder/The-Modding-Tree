@@ -41,7 +41,7 @@ addLayer("n", {
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
-            key: "N", description: "N: Reset your Fire for Extra Flame ", onPress() {
+            key: "n", description: "n: Reset your Fire for Extra Flame ", onPress() {
                 if (canReset(this.layer)) doReset(this.layer)
             }
         },
@@ -365,7 +365,7 @@ addLayer("v", {
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
-            key: "V", description: "V: Reset your Extra Flame for Void Shards ", onPress() {
+            key: "v", description: "v: Reset your Extra Flame for Void Shards ", onPress() {
                 if (canReset(this.layer)) doReset(this.layer)
             }
         },
@@ -483,7 +483,7 @@ addLayer("a", {
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
-            key: "A", description: "A: Reset your Extra Flame for Atoms ", onPress() {
+            key: "a", description: "a: Reset your Extra Flame for Atoms ", onPress() {
                 if (canReset(this.layer)) doReset(this.layer)
             }
         },
@@ -619,7 +619,7 @@ addLayer("o", {
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
-            key: "O", description: "O: Reset your Extra Flame for Oddities ", onPress() {
+            key: "o", description: "o: Reset your Extra Flame for Oddities ", onPress() {
                 if (canReset(this.layer)) doReset(this.layer)
             }
         },
