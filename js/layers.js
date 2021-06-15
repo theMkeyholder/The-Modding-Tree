@@ -512,7 +512,7 @@ addLayer("a", {
         11: {
             unlocked(){return hasUpgrade("a", 11)},
             name: "Atomic Annihilation",
-            challengeDescription: "Invert Upgrade Effects (Upgrades that raise something to a power are disabled), the Void Milestone is disabled, and reset EVERYTHING BEFORE ATOMS.",
+            challengeDescription: "Invert all Upgrade Effects, disable Upgrades that raise something to a power, the Void Milestone is disabled, and reset EVERYTHING BEFORE ATOMS.",
             goalDescription: "At least 4 NXF Upgrades",
             rewardDescription: "...",
             canComplete: function() {return new Decimal(player.n.upgrades.length).gte(4)},
