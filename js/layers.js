@@ -157,7 +157,12 @@ addLayer("n", {
         33: {
             title: "I ran out of names",
             description: "Wow that last Upgrade really made progress take off! Disable all row 2 upgrades, but Flamemaster96 has a much better formula [log(9e6) => log(90)]",
-            cost: 9.6e4
+            cost() {
+                if (!inChallenge("a", 12))
+                    return new Decimal(9.6e4)
+                else
+                    return new Decimal(15000)
+            }
         },
         42: {
             unlocked(){return hasUpgrade("n", 33)},
@@ -353,6 +358,8 @@ addLayer("v", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
+        if (hasUpgrade("as", 12)) mult = mult.times(upgradeEffect("as", 12))
+        if (hasUpgrade("as", 14)) mult = mult.times(upgradeEffect("as", 14))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -389,6 +396,9 @@ addLayer("v", {
         rows: 10,
         cols: 10,
         11: {
+            unlocked(){
+                return (!inChallenge("a", 12))
+            },
             title: "...",
             description: "Multiply Fire gain by the log(10) of Fire",
             effect(){
@@ -403,6 +413,9 @@ addLayer("v", {
             cost: 2
         },
         12: {
+            unlocked(){
+                return (!inChallenge("a", 12))
+            },
             title: "Endless.",
             description: "Multiply Fire gain by the log(2) of Fire",
             effect(){
@@ -417,6 +430,9 @@ addLayer("v", {
             cost: 20
         },
         13: {
+            unlocked(){
+                return (!inChallenge("a", 12))
+            },
             title: "Void",
             description: "Multiply Fire gain by the slog of Fire raised to the 2nd Power",
             effect(){
@@ -435,6 +451,9 @@ addLayer("v", {
             cost: 300
         },
         14: {
+            unlocked(){
+                return (!inChallenge("a", 12))
+            },
             title: "Void II",
             description: "Multiply Fire gain by the slog of Fire raised to the 5th Power",
             effect(){
@@ -465,19 +484,27 @@ addLayer("a", {
         }
     },
     color: "#0074cd",
-    requires: new Decimal(1e37), // Can be a function that takes requirement increases into account
+    requires() {
+        if (hasUpgrade("as", 15))
+            return new Decimal(1e37).div(upgradeEffect("as", 15))
+        else
+            return new Decimal(1e37)
+    },
+    // Can be a function that takes requirement increases into account
     resource: "Atoms", // Name of prestige currency
     baseResource: "Fire", // Name of resource prestige is based on
     resetDescription: "Reset for ",
     baseAmount() {
         return player.points
     }, // Get the current amount of baseResource
-    canReset() {
-        return hasUpgrade("n", 42) && player.points.gte(1e37);
-    },
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     base(){
-        return 1e9696
+        if (hasUpgrade("as", 15)){
+            return 1e6
+        }
+        else{
+            return 1e9696
+        }
     },
     branches: [""],
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -492,8 +519,8 @@ addLayer("a", {
         return hasUpgrade("g", 21)
     },
     upgrades: {
-        rows: 4,
-        cols: 3,
+        rows: 10,
+        cols: 10,
         11: {
             title: "Atomic Destruction",
             description: "Annihilate Atoms, which deactivates Void and Void II, but unlock something new?",
@@ -507,24 +534,90 @@ addLayer("a", {
             description: "Annihilate Annihilated Atoms, which unlocks 2 new Layers.",
             cost: 0
         },
+        21: {
+            unlocked(){
+                return hasUpgrade("as", 15)
+            },
+            effect(){
+                return new Decimal(9)
+            },
+            fullDisplay: "<h3>Atomic 9</h3><br>Multiply your Fire gain by 9<br><br>Requires: 1 Atom",
+            canAfford(){return (player.a.points.gte(1))},
+        },
+        22: {
+            unlocked(){
+                return hasUpgrade("as", 15)
+            },
+            effect(){
+                if (player.a.points.lessThan(11))
+                    return new Decimal(player.a.points)
+                else
+                    return new Decimal(10)
+            },
+            fullDisplay: "<h3>Atomic Repetition</h3><br>Multiply your Fire Gain by your Atoms (capped at 10x)<br><br>Requires: 2 Atoms and 1 Oddity",
+            canAfford(){return (player.a.points.gte(2) && player.o.points.gte(1))},
+        },
+        23: {
+            unlocked(){
+                return hasUpgrade("as", 15)
+            },
+            effect(){
+                if (inChallenge("a", 12)){
+                    return new Decimal(player.as.points.plus(1).sqrt())
+                }
+                else
+                    return new Decimal(player.as.points.plus(1).log(10).sqrt())
+            },
+            fullDisplay() {
+                return `<h3>Atomic Shattering</h3><br>Atomic Shards multiply your Fire gain<br><br>Requires: 5 Atoms and 100 Oddities<br>Currently: ${format(upgradeEffect("a", 23))}x`
+            },
+            canAfford(){return (player.a.points.gte(5) && player.o.points.gte(100))},
+        },
+        31: {
+            unlocked(){
+                return hasUpgrade("a", 23)
+            },
+            fullDisplay() {
+                return `<h3>Atomic Awakening.</h3><br>Disable the last Atomic Shard Upgrade but unlock <h3>Atomic Awakening</h3>.<br><br>Requires: 7 Atoms and 9600 Oddities`
+            },
+            canAfford(){return (player.a.points.gte(7) && player.o.points.gte(9600))},
+        },
     },
     challenges: {
         11: {
             unlocked(){return hasUpgrade("a", 11)},
             name: "Atomic Annihilation",
-            challengeDescription: "Invert all Upgrade Effects, disable Upgrades that raise something to a power, the Void Milestone is disabled, and reset EVERYTHING BEFORE ATOMS.",
+            challengeDescription: "Invert all Upgrade Effects, disable Upgrades that raise something to a power, the Void Milestone is disabled, each upgrade multiplies production by 2 (before all other effects), and reset EVERYTHING BEFORE ATOMS.",
             goalDescription: "At least 4 NXF Upgrades",
             rewardDescription: "...",
             canComplete: function() {return new Decimal(player.n.upgrades.length).gte(4)},
             onEnter() {
                 player.points = player.points.sub(player.points)
-                player.n.points = player.n.points.sub(player.n.points)
+                player.n.points = player.n.points.sub(player.n.points.sub(5))
                 player.v.points = player.v.points.sub(player.v.points)
                 layerDataReset("v")
             },
             onExit() {
                 player.v.points = player.v.points.plus(1)
             }
+        },
+        12: {
+            unlocked(){return hasUpgrade("a", 31)},
+            name: "Atomic Awakening",
+            challengeDescription: "All effects of Atomic Annihilation, Atomic Shattering uses a better formula, disable all new Atom Upgrades (except Atomic Shattering), Void Shards stop converting to Atomic Shards, and reset EVERYTHING BEFORE ATOMS.",
+            goalDescription: "Buy the final NXF Upgrade",
+            rewardDescription: "Awaken The Atoms",
+            canComplete: function() {return hasUpgrade("n", 42)},
+            onEnter() {
+                player.points = player.points.sub(player.points)
+                player.n.points = player.n.points.sub(player.n.points.sub(5))
+                player.v.points = player.v.points.sub(player.v.points)
+                layerDataReset("v")
+            },
+            onExit() {
+                player.v.points = player.v.points.plus(1)
+            },
+            countsAs: [11]
         },
     }
 })
@@ -549,7 +642,6 @@ addLayer("as", {
     canReset() {
         return false
     },
-    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
@@ -570,16 +662,65 @@ addLayer("as", {
         return `dividing the Oddity requirement by ${format(tmp.as.effect)}`
     },
     update(diff) {
-        if (hasUpgrade("as", 11))
-        player.as.points = player.as.points.plus(player.v.points).div(100)
+        if (!inChallenge("a", 12)){
+            if (hasUpgrade("as", 11)){
+                if (hasUpgrade("as", 13)){
+                    if (player.as.points.plus(player.v.points).div(10).div(2).gte(player.as.points))
+                    player.as.points = player.as.points.plus(player.v.points).div(10).div(2)
+                }
+                else
+                    player.as.points = player.as.points.plus(player.v.points).div(100)
+            }
+        }
     },
     upgrades: {
-        rows: 4,
-        cols: 3,
+        rows: 10,
+        cols: 10,
         11: {
             title: "Atomic Annihilation",
             description: "Gain 100% of Void Shard gain every second and convert 1% of your Void Shards to Atomic Shards every second",
             cost: 0
+        },
+        12: {
+            title: "Atomic Power",
+            description: "Atomic Shards boost Void Shard gain",
+            effect(){
+                return new Decimal(player.as.points.plus(1).log(2).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("as", 12))}x`
+            },
+            cost: 3000
+        },
+        13: {
+            title: "Atomic Ascension",
+            description: "5% of your Void Shards are converted to Atomic Shards instead of 1%",
+            cost: 100000
+        },
+        14: {
+            title: "Atomic Enhancement",
+            description: "Atomic Shards boost Void Shard gain again",
+            effect(){
+                return new Decimal(player.as.points.plus(1).log(2).pow(1.1).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("as", 14))}x`
+            },
+            cost: 1e6
+        },
+        15: {
+            title: "Atomic Synergy",
+            description: "Atomic Shards also lower the Atom requirement, and unlock new Atom upgrades",
+            effect(){
+                if (hasUpgrade("a", 31))
+                    return new Decimal(1)
+                else
+                    return new Decimal(player.as.points.plus(1).pow(1.8))
+            },
+            effectDisplay(){
+                return `/${format(upgradeEffect("as", 15))}`
+            },
+            cost: 1e7
         },
     },
 })
@@ -627,13 +768,4 @@ addLayer("o", {
     layerShown() {
         return hasUpgrade("a", 12)
     },
-    upgrades: {
-        rows: 4,
-        cols: 3,
-        11: {
-            title: "WIP",
-            description: ".",
-            cost: 1e969696969696
-        },
-    }
 })

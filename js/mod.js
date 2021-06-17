@@ -12,12 +12,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.0",
-	name: "Shards",
+	num: "1.1",
+	name: "Atomic Reconstruction",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v1.0</h3><br>
+	<h3>v1.1</h3><br>
 		- I'm not using this lol.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -56,9 +56,12 @@ function getPointGen() {
 		if (hasUpgrade("v", 12)) gain = gain.times(upgradeEffect("v", 12))
 		if (hasUpgrade("v", 13)) gain = gain.times(upgradeEffect("v", 13))
 		if (hasUpgrade("v", 14)) gain = gain.times(upgradeEffect("v", 14))
+		if (hasUpgrade("a", 21)) gain = gain.times(upgradeEffect("a", 21))
+		if (hasUpgrade("a", 22)) gain = gain.times(upgradeEffect("a", 22))
+		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
 	}
 	else {
-		gain = gain.plus(9)
+		if (new Decimal(player.n.upgrades.length).gte(1)) gain = gain.times(player.n.upgrades.length).times(2)
 		if (hasUpgrade("n", 22)) gain = gain.div(upgradeEffect("n", 22))
 		if (hasUpgrade("n", 11)) gain = gain.sub(upgradeEffect("n", 11))
 		if (hasUpgrade("n", 12)) gain = gain.div(upgradeEffect("n", 12))
@@ -71,6 +74,7 @@ function getPointGen() {
 		if (hasUpgrade("v", 12)) gain = gain.div(upgradeEffect("v", 12))
 		if (hasUpgrade("v", 13)) gain = gain.div(upgradeEffect("v", 13))
 		if (hasUpgrade("v", 14)) gain = gain.div(upgradeEffect("v", 14))
+		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
 	}
 	return gain
 }
@@ -81,7 +85,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	`Current Endgame: 1 Oddity`,
+	`Current Endgame: Awakened Atoms`,
 	`The Real Game Begins after Completing the gwa Layer`
 ]
 
