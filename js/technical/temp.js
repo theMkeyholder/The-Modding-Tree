@@ -25,6 +25,7 @@ var traversableClasses = []
 function setupTemp() {
 	tmp = {}
 	tmp.pointGen = {}
+	tmp.backgroundStyle = {}
 	tmp.displayThings = []
 	tmp.scrolled = 0
 	funcs = {}
@@ -54,6 +55,8 @@ function setupTemp() {
 	temp = tmp
 }
 
+const boolNames = ["unlocked", "deactivated"]
+
 function setupTempData(layerData, tmpData, funcsData) {
 	for (item in layerData){
 		if (layerData[item] == null) {
@@ -77,7 +80,10 @@ function setupTempData(layerData, tmpData, funcsData) {
 		}
 		else if (isFunction(layerData[item]) && !activeFunctions.includes(item)){
 			funcsData[item] = layerData[item]
-			tmpData[item] = decimalOne // The safest thing to put probably?
+			if (boolNames.includes(item))
+				tmpData[item] = false
+			else
+				tmpData[item] = decimalOne // The safest thing to put probably?
 		} else {
 			tmpData[item] = layerData[item]
 		}
@@ -92,34 +98,20 @@ function updateTemp() {
 	updateTempData(layers, tmp, funcs)
 
 	for (layer in layers){
-		let problem = ""
 		tmp[layer].resetGain = getResetGain(layer)
-		if (checkDecimalNaN(tmp[layer].resetGain))
-			problem = "resetGain"
 		tmp[layer].nextAt = getNextAt(layer)
-		if (checkDecimalNaN(tmp[layer].nextAt))
-			problem = "nextAt"
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
 		tmp[layer].canReset = canReset(layer)
 		tmp[layer].trueGlowColor = tmp[layer].glowColor
 		tmp[layer].notify = shouldNotify(layer)
 		tmp[layer].prestigeNotify = prestigeNotify(layer)
-		if (problem && !NaNalert) {
-			confirm("Invalid value found in temp." + layer + "." + problem + ". Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
-			clearInterval(interval);
-			NaNalert = true;
-			return
-		}
+		if (tmp[layer].passiveGeneration === true) tmp[layer].passiveGeneration = 1 // new Decimal(true) = decimalZero
 
 	}
 
 	tmp.pointGen = getPointGen()
-	if (checkDecimalNaN(tmp.pointGen) && !NaNalert) {
-		confirm("Invalid value found in temp.pointGen. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
-		clearInterval(interval);
-		NaNalert = true;
-		return
-	}
+	tmp.backgroundStyle = readData(backgroundStyle)
+
 	tmp.displayThings = []
 	for (thing in displayThings){
 		let text = displayThings[thing]
@@ -142,14 +134,6 @@ function updateTempData(layerData, tmpData, funcsData, useThis) {
 
 			if (useThis !== undefined) value = layerData[item].bind(useThis)()
 			else value = layerData[item]()
-			if (value !== value || checkDecimalNaN(value)){
-				if (!NaNalert) {
-					confirm("Invalid value found in tmp, named '" + item + "'. Please let the creator of this mod know! You can refresh the page, and you will be un-NaNed.")
-					clearInterval(interval);
-					NaNalert = true;
-					return
-				}
-			}
 			Vue.set(tmpData, item, value)
 		}
 	}	
