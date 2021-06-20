@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Flame Tree",
-	id: "flametree",
+	id: "flametreebeta",
 	author: "FlamemasterNXF",
 	pointsName: "Fire",
 	modFiles: ["layers.js", "tree.js"],
@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.1",
-	name: "Atomic Reconstruction",
+	num: "1.2 BETA",
+	name: "[]",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
