@@ -19,6 +19,13 @@ addLayer("n", {
     exponent: 0.5, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
+        if (hasUpgrade("o", 11)) mult = mult.times(upgradeEffect("o", 11))
+        if (hasUpgrade("o", 12)) mult = mult.times(upgradeEffect("o", 12))
+        if (hasUpgrade("o", 13)) mult = mult.times(upgradeEffect("o", 13))
+        if (hasUpgrade("o", 14)) mult = mult.times(upgradeEffect("o", 14))
+        if (hasUpgrade("o", 15)) mult = mult.times(upgradeEffect("o", 15))
+        if (hasUpgrade("o", 16)) mult = mult.times(upgradeEffect("o", 16))
+        if (hasUpgrade("o", 21)) mult = mult.times(upgradeEffect("o", 21))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -26,15 +33,22 @@ addLayer("n", {
     },
     passiveGeneration(){
         if (!inChallenge("a", 11)) {
-            if (!hasUpgrade("g", 21))
-                return hasMilestone("g",0) && (!hasUpgrade("g", 21))
+            if (! hasMilestone("aa", 0)){
+                if (!hasUpgrade("g", 21))
+                    return hasMilestone("g",0) && (!hasUpgrade("g", 21))
+                else
+                    return hasMilestone("v", 0)
+            }
             else
-                return hasMilestone("v", 0)
+                return hasMilestone("aa", 0)
         }
     },
     autoUpgrade(){
         if (!inChallenge("a", 11)){
+            if (!hasMilestone("aa", 0))
             return hasMilestone("v", 0)
+            else
+                return hasMilestone("aa", 0)
         }
     },
     branches: ["g", "v", "a", "o"],
@@ -152,14 +166,23 @@ addLayer("n", {
             effectDisplay(){
                 return `^${format(upgradeEffect("n", 32))}`;
             },
-            cost: 1.0096e4
+            cost(){
+                if (!hasMilestone("aa", 0))
+                    return new Decimal(1.0096e4)
+                else
+                    return new Decimal(1.0096e3)
+            }
         },
         33: {
             title: "I ran out of names",
             description: "Wow that last Upgrade really made progress take off! Disable all row 2 upgrades, but Flamemaster96 has a much better formula [log(9e6) => log(90)]",
             cost() {
-                if (!inChallenge("a", 12))
-                    return new Decimal(9.6e4)
+                if (!inChallenge("a", 12)){
+                    if (!hasMilestone("aa", 0))
+                        return new Decimal(9.6e4)
+                    else
+                        return new Decimal(9.6e3)
+                }
                 else
                     return new Decimal(15000)
             }
@@ -217,6 +240,9 @@ addLayer("g", {
     ],
     layerShown() {
         return (!hasUpgrade("g", 21))
+    },
+    doReset(resettingLayer) {
+        return false
     },
     milestones: {
         0: {
@@ -366,7 +392,13 @@ addLayer("v", {
         return new Decimal(1)
     },
     passiveGeneration() {
+        if (!hasMilestone("aa", 0))
         return hasUpgrade("as", 11);
+        else
+            return hasMilestone("aa", 0)
+    },
+    autoUpgrade() {
+        return hasMilestone("aa", 0);
     },
     branches: ["a", "as"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -485,10 +517,14 @@ addLayer("a", {
     },
     color: "#0074cd",
     requires() {
-        if (hasUpgrade("as", 15))
-            return new Decimal(1e37).div(upgradeEffect("as", 15))
+        if (!player.a.points.gte(7)){
+            if (hasUpgrade("as", 15))
+                return new Decimal(1e37).div(upgradeEffect("as", 15))
+            else
+                return new Decimal(1e37)
+        }
         else
-            return new Decimal(1e37)
+            return new Decimal(1e969696969696)
     },
     // Can be a function that takes requirement increases into account
     resource: "Atoms", // Name of prestige currency
@@ -506,7 +542,7 @@ addLayer("a", {
             return 1e9696
         }
     },
-    branches: [""],
+    branches: ["aa"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
@@ -517,6 +553,11 @@ addLayer("a", {
     ],
     layerShown() {
         return hasUpgrade("g", 21)
+    },
+    update(diff){
+        if(player.a.points.gt(7)){
+            player.a.points = new Decimal(7)
+        }
     },
     upgrades: {
         rows: 10,
@@ -595,6 +636,7 @@ addLayer("a", {
                 player.points = player.points.sub(player.points)
                 player.n.points = player.n.points.sub(player.n.points.sub(5))
                 player.v.points = player.v.points.sub(player.v.points)
+                layerDataReset("n")
                 layerDataReset("v")
             },
             onExit() {
@@ -612,10 +654,12 @@ addLayer("a", {
                 player.points = player.points.sub(player.points)
                 player.n.points = player.n.points.sub(player.n.points.sub(5))
                 player.v.points = player.v.points.sub(player.v.points)
+                layerDataReset("n")
                 layerDataReset("v")
             },
             onExit() {
                 player.v.points = player.v.points.plus(1)
+                player.o.points = player.o.points.sub(player.o.points)
             },
             countsAs: [11]
         },
@@ -650,16 +694,26 @@ addLayer("as", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    branches: [""],
+    branches: ["aa"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
         return hasUpgrade("a", 12)
     },
     effect(){
+        if (!hasUpgrade("aa", 11))
         return new Decimal(player.as.points.plus(1).div(10))
+        if (hasUpgrade("aa", 11)){
+            if (hasChallenge("a", 12))
+                return new Decimal(1)
+            else
+                return new Decimal(player.as.points.plus(1).div(10))
+        }
     },
     effectDescription(){
         return `dividing the Oddity requirement by ${format(tmp.as.effect)}`
+    },
+    doReset(resettingLayer) {
+        return true;
     },
     update(diff) {
         if (!inChallenge("a", 12)){
@@ -671,6 +725,13 @@ addLayer("as", {
                 else
                     player.as.points = player.as.points.plus(player.v.points).div(100)
             }
+        }
+    },
+    doReset(l) {
+        if (layers[l].row >= this.row) {
+            let keep = []
+
+            layerDataReset(this.layer, keep)
         }
     },
     upgrades: {
@@ -724,6 +785,84 @@ addLayer("as", {
         },
     },
 })
+addLayer("aa", {
+    name: "Awakened Atoms", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "AA", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#1ba0ff",
+    requires() {
+        return new Decimal(7)
+    },
+    // Can be a function that takes requirement increases into account
+    resource: "Awakened Atoms", // Name of prestige currency
+    baseResource: "Atoms", // Name of resource prestige is based on
+    resetDescription: "Reset for ",
+    exponent: 5.2, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    baseAmount() {
+        return player.a.points
+    }, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    branches: [""],
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {
+            key: "w", description: "W: Reset your Atoms for Awakened Atoms ", onPress() {
+                if (canReset(this.layer)) doReset(this.layer)
+            }
+        },
+    ],
+    layerShown() {
+        return hasChallenge("a", 12) || player.aa.total.gte(1)
+    },
+    effect(){
+        if (player.aa.points.gte(1))
+            return new Decimal(player.aa.points.times(10))
+        else
+            return new Decimal(1)
+    },
+    effectDescription(){
+        if (player.aa.points.gte(1))
+            return `raising Fire production to the <h3>${format(tmp.aa.effect)}th</h3> power`
+        else
+            return `raising Fire production to the <h3>${format(new Decimal(1))}</h3>st power`
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 Awakened Atom",
+            effectDescription: "Gain 100% of Extra Flame every second, Autobuy Extra Flame Upgrades, gain 100% of Void Shard Gain every second, Autobuy Void Shard Upgrades, and lower the costs of Flamemaster96 and I ran out of names",
+            done() { return player.v.points.gte(1) }
+        },
+    },
+    upgrades: {
+        rows: 10,
+        cols: 10,
+        11: {
+            unlocked(){
+                return hasUpgrade("a", 12)
+            },
+            title: "Quite Peculiar",
+            description: "[Only works if Atomic Awakening is completed] Disable the effect of Atomic Shards, lower the base requirement for Oddities to 3e21, reset Oddities, but open up a portal to the Odd",
+            cost: 1,
+            pay() {
+                player.aa.points = player.aa.points.sub(1)
+                player.o.points = player.o.points.sub(player.o.points)
+            }
+        },
+    }
+})
 addLayer("o", {
     name: "Oddities", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "O", // This appears on the layer's node. Default is the id with the first letter capitalized
@@ -736,10 +875,12 @@ addLayer("o", {
     },
     color: "#8a8a8a",
     requires() {
+        if (hasUpgrade("aa", 11) && hasChallenge("a", 12))
+            return new Decimal(3e21)
         if (tmp.as.effect.gt(1))
             return new Decimal(1e17).div(tmp.as.effect)
         else
-            return new Decimal(1e17)
+            return new Decimal(1e96)
     }, // Can be a function that takes requirement increases into account
     resource: "Oddities", // Name of prestige currency
     baseResource: "Extra Flame", // Name of resource prestige is based on
@@ -748,7 +889,13 @@ addLayer("o", {
         return player.n.points
     }, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
+    exponent(){
+        if (hasUpgrade("aa", 11)&& hasChallenge("a", 12)){
+            return new Decimal(0.1)
+        }
+        else
+            return new Decimal(0.5)
+    }, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
         return mult
@@ -756,7 +903,7 @@ addLayer("o", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    branches: [""],
+    branches: ["vg"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
@@ -768,4 +915,240 @@ addLayer("o", {
     layerShown() {
         return hasUpgrade("a", 12)
     },
+    upgrades: {
+        rows: 10,
+        cols: 10,
+        11: {
+            unlocked() {
+                return (hasUpgrade("aa", 11) && hasChallenge("a", 12))
+            },
+            title: "Odd",
+            description: "Multiply Extra Flame gain by the amount of m's in this Hmmmmmmmmm",
+            effect(){
+                return new Decimal(9)
+            },
+            cost: 1
+        },
+        12: {
+            unlocked() {
+                return (hasUpgrade("o", 11)&& hasChallenge("a", 12))
+            },
+            title: "Strange",
+            description: "Multiply Extra Flame gain by Extra Flame",
+            effect(){
+                if (hasUpgrade("o", 22))
+                    return new Decimal(player.n.points.plus(1).log(1000).times(upgradeEffect("o", 22)).plus(1))
+                else
+                    return new Decimal(player.n.points.plus(1).log(1000).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 12))}x`
+            },
+            cost: 1
+        },
+        13: {
+            unlocked() {
+                return (hasUpgrade("o", 12)&& hasChallenge("a", 12))
+            },
+            title: "Weird",
+            description: "Multiply Extra Flame gain by Extra Flame again",
+            effect(){
+                if (hasUpgrade("o", 23)){
+                    return new Decimal(player.n.points.plus(1).log(500).times(upgradeEffect("o", 23)).plus(1))
+                }
+                return new Decimal(player.n.points.plus(1).log(500).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 13))}x`
+            },
+            cost: 2
+        },
+        14: {
+            unlocked() {
+                return (hasUpgrade("o", 13)&& hasChallenge("a", 12))
+            },
+            title: "Bizarre",
+            description: "Multiply Extra Flame gain by 2 for each Oddity Upgrade",
+            effect(){
+                if (new Decimal(player.o.upgrades.length).gte(1)){
+                    if (hasUpgrade("o", 24)){
+                        return new Decimal(player.o.upgrades.length).times(3)
+                    }
+                    else
+                        return new Decimal(player.o.upgrades.length).times(2)
+                }
+                else
+                    return new Decimal(1)
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 14))}x`
+            },
+            cost: 3
+        },
+        15: {
+            unlocked() {
+                return (hasUpgrade("o", 14)&& hasChallenge("a", 12))
+            },
+            title: "Unusual",
+            description: "Multiply Extra Flame gain by Void Shards",
+            effect(){
+                if (hasUpgrade("o", 25)){
+                    return new Decimal(player.v.points.log(200).plus(1).times(upgradeEffect("o", 25)))
+                }
+                else
+                    return new Decimal(player.v.points.log(200))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 15))}x`
+            },
+            cost: 5
+        },
+        16: {
+            unlocked() {
+                return (hasUpgrade("o", 15)&& hasChallenge("a", 12))
+            },
+            title: "Abnormal",
+            description: "Multiply Extra Flame gain by Fire",
+            effect(){
+                if (hasUpgrade("o", 26)){
+                    return new Decimal(player.points.log(200).plus(1).times(upgradeEffect("o", 26)))
+                }
+                else
+                    return new Decimal(player.points.log(200))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 16))}x`
+            },
+            cost: 7
+        },
+        21: {
+            unlocked() {
+                return (hasUpgrade("o", 16)&& hasChallenge("a", 12))
+            },
+            title: "Unconventional",
+            description: "Multiply Extra Flame gain by Atoms",
+            effect(){
+                return new Decimal(player.a.points).pow(1.5)
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 21))}x`
+            },
+            cost: 10
+        },
+        22: {
+            unlocked() {
+                return (hasUpgrade("o", 21)&& hasChallenge("a", 12))
+            },
+            title: "Outlandish",
+            description: "Multiply Strange's effect by the log(20) of itself",
+            effect(){
+                return new Decimal(upgradeEffect("o", 12)).plus(1).log(20).plus(1)
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 22))}x`
+            },
+            cost: 10
+        },
+        23: {
+            unlocked() {
+                return (hasUpgrade("o", 22)&& hasChallenge("a", 12))
+            },
+            title: "Freaky",
+            description: "Multiply Weird's effect by the log(20) of itself",
+            effect(){
+                return new Decimal(upgradeEffect("o", 13)).plus(1).log(20).plus(1)
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 23))}x`
+            },
+            cost: 10
+        },
+        24: {
+            unlocked() {
+                return (hasUpgrade("o", 23)&& hasChallenge("a", 12))
+            },
+            title: "Uncommon",
+            description: "Bizarre is 3x instead",
+            cost: 15
+        },
+        25: {
+            unlocked() {
+                return (hasUpgrade("o", 24)&& hasChallenge("a", 12))
+            },
+            title: "Irregular",
+            description: "Multiply Bizarre's effect by the log(20) of itself",
+            effect(){
+                return new Decimal(upgradeEffect("o", 15)).plus(1).log(20).plus(1)
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 25))}x`
+            },
+            cost: 20
+        },
+        26: {
+            unlocked() {
+                return (hasUpgrade("o", 25)&& hasChallenge("a", 12))
+            },
+            title: "Questionable",
+            description: "Multiply Abnormal's effect by the log(20) of itself",
+            effect(){
+                return new Decimal(upgradeEffect("o", 16)).plus(1).log(20).plus(1)
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("o", 26))}x`
+            },
+            cost: 20
+        },
+        31: {
+            unlocked() {
+                return (hasUpgrade("o", 26)&& hasChallenge("a", 12))
+            },
+            title: "Void.",
+            description: "Unleash the power of the Oddities and awaken the Void",
+            cost: 10
+        },
+    },
+})
+addLayer("vg", {
+    name: "void gwa", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "vgwa", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 4, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    image: "https://cdn.discordapp.com/emojis/854483367600193566.png",
+    color: "#000000",
+    requires: new Decimal(30), // Can be a function that takes requirement increases into account
+    resource: "void gwa", // Name of prestige currency
+    baseResource: "oddities", // Name of resource prestige is based on
+    baseAmount() {
+        return new Decimal(player.o.points)
+    }, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    resetDescription: "Reset for ",
+    branches: [],
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        return (hasUpgrade("o", 31))
+    },
+    upgrades: {
+        rows: 3,
+        cols: 3,
+        11: {
+            title: "the opposite",
+            description: "wip",
+            cost: 1
+        },
+    }
 })
