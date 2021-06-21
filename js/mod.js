@@ -3,7 +3,7 @@ let modInfo = {
 	id: "flametreebeta",
 	author: "FlamemasterNXF",
 	pointsName: "Fire",
-	modFiles: ["layers.js", "tree.js"],
+	modFiles: ["tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js"],
 
 	discordName: "My Discord server!",
 	discordLink: "https://discord.gg/Js93DSjBAY",
@@ -13,12 +13,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2 BETA",
+	num: "1.2 BETA 2",
 	name: "[]",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v1.1</h3><br>
+	<h3>v1.2</h3><br>
 		- I'm not using this lol.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -60,7 +60,8 @@ function getPointGen() {
 		if (hasUpgrade("a", 21)) gain = gain.times(upgradeEffect("a", 21))
 		if (hasUpgrade("a", 22)) gain = gain.times(upgradeEffect("a", 22))
 		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
-		if (player.aa.points.gte(1)) gain = gain.times(tmp.aa.effect)
+		if (player.aa.best.gte(1)) gain = gain.times(tmp.aa.effect)
+		if (hasUpgrade("p", 11)) gain = gain.times(tmp.p.effect)
 	}
 	else {
 		if (new Decimal(player.n.upgrades.length).gte(1)) gain = gain.times(player.n.upgrades.length).times(2)
