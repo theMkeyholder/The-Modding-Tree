@@ -27,9 +27,6 @@ addLayer("g", {
     },
     resetDescription: "[requires final nxf upgrade] reset for ",
     branches: [],
-    unlocked() {
-        return hasUpgrade("n", 42) || player.g.points.gte(1) || hasUpgrade("g", 11);
-    },
     canReset() {
         return hasUpgrade("n", 42) && player.n.points.gte(tmp.g.nextAt);
     },
@@ -44,8 +41,12 @@ addLayer("g", {
     layerShown() {
         return (!hasUpgrade("g", 21))
     },
-    doReset(resettingLayer) {
-        return false
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
+        }
     },
     milestones: {
         0: {

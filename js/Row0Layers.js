@@ -67,13 +67,6 @@ addLayer("n", {
                 return hasMilestone("aa", 0)
         }
     },
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            default: true; break;
-        }
-    },
     branches: ["g", "v", "a", "o"],
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
