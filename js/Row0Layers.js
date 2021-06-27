@@ -21,7 +21,7 @@ addLayer("n", {
     startData() {
         return {
             unlocked: true,
-            points: new Decimal(0),
+            points: new Decimal(1),
         }
     },
     color: "#ff0000",
@@ -68,7 +68,11 @@ addLayer("n", {
         }
     },
     doReset(resettingLayer){
-        if(!["sp","up"].includes(resettingLayer)){layerDataReset(this.layer,[])}
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
+        }
     },
     branches: ["g", "v", "a", "o"],
     row: 0, // Row the layer is in on the tree (0 is the first row)
@@ -94,7 +98,7 @@ addLayer("n", {
             effectDisplay() {
                 return `+${format(upgradeEffect("n", 11))}`;
             },
-            cost: 1
+            cost: 2
         },
         12: {
             title: "Flamemaster",
