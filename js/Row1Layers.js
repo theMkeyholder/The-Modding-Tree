@@ -708,6 +708,9 @@ addLayer("vg", {
         return new Decimal(player.o.points)
     }, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    base() {
+        return 1e9696;
+    },
     resetDescription: "Reset for ",
     doReset(resettingLayer){
         switch(resettingLayer) {
