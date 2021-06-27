@@ -76,6 +76,14 @@ addLayer("as", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            case "aa": true; break;
+            default: true; break;
+        }
+    },
     branches: ["aa"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
@@ -94,9 +102,6 @@ addLayer("as", {
     effectDescription(){
         return `dividing the Oddity requirement by ${format(tmp.as.effect)}`
     },
-    doReset(resettingLayer) {
-        return true;
-    },
     update(diff) {
         if (!inChallenge("a", 12)){
             if (hasUpgrade("as", 11)){
@@ -107,13 +112,6 @@ addLayer("as", {
                 else
                     player.as.points = player.as.points.plus(player.v.points).div(100)
             }
-        }
-    },
-    doReset(l) {
-        if (layers[l].row >= this.row) {
-            let keep = []
-
-            layerDataReset(this.layer, keep)
         }
     },
     upgrades: {
@@ -197,6 +195,13 @@ addLayer("aa", {
         return player.a.points
     }, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
+        }
+    },
     branches: [""],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [

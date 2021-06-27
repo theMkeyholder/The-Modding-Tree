@@ -29,6 +29,9 @@ addLayer("p", {
     effectDescription(){
         return `multiplying Fire gain by ${format(tmp.p.effect)}`
     },
+    autoUpgrade() {
+        return hasMilestone("sp", 0);
+    },
     branches: ["sp"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
@@ -46,6 +49,10 @@ addLayer("p", {
             if (player.sp.points.gte(1)) gain = gain.times(tmp.sp.effect)
             if (hasUpgrade("sp", 11)) gain = gain.times(upgradeEffect("sp", 11))
             if (hasUpgrade("sp", 12)) gain = gain.times(upgradeEffect("sp", 12))
+            if (hasUpgrade("sp", 15)) gain = gain.times(upgradeEffect("sp", 15))
+            if (hasUpgrade("sp", 16)) gain = gain.times(upgradeEffect("sp", 16))
+            if (hasUpgrade("sp", 21)) gain = gain.times(upgradeEffect("sp", 21))
+            if (hasUpgrade("sp", 22)) gain = gain.times(upgradeEffect("sp", 22))
         }
         player.p.points = player.p.points.plus(gain)
     },
@@ -134,7 +141,10 @@ addLayer("sp", {
     },
     color: "#8a8a8a",
     requires() {
+        if (!hasUpgrade("sp", 14))
         return new Decimal(5e7)
+        else
+            return new Decimal(1e6)
     }, // Can be a function that takes requirement increases into account
     resource: "Super Prestige Points", // Name of prestige currency
     baseResource: "Prestige Points", // Name of resource prestige is based on
@@ -171,6 +181,16 @@ addLayer("sp", {
     layerShown() {
         return hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
     },
+    milestones: {
+        0: {
+            unlocked(){
+                return hasUpgrade("sp", 13)
+            },
+            requirementDescription: "2 Super Prestige Points",
+            effectDescription: "Autobuy Prestige Upgrades",
+            done() { return player.sp.points.gte(2) }
+        },
+    },
     upgrades: {
         rows: 10,
         cols: 10,
@@ -196,6 +216,66 @@ addLayer("sp", {
             },
             cost: 1
         },
+        13: {
+            unlocked() {
+                return hasUpgrade("sp", 12);
+            },
+            title: "SUPER PRESTIG",
+            description: "Unlock a SP Milestone",
+            cost: 4
+        },
+        14: {
+            unlocked() {
+                return hasUpgrade("sp", 13);
+            },
+            title: "Un-Timewalled",
+            description: "The base requirement for a Super Prestige Point is now 1e6",
+            cost: 4
+        },
+        15: {
+            unlocked() {
+                return hasUpgrade("sp", 14);
+            },
+            title: "Un-Fun",
+            description: "Quit the game, multiplying Prestige Point gain by 100",
+            effect(){
+                return new Decimal(100)
+            },
+            cost: 15
+        },
+        16: {
+            unlocked() {
+                return hasUpgrade("sp", 15);
+            },
+            title: "Wow you're still here?",
+            description: "Rage, multiplying Prestige Point gain by 100",
+            effect(){
+                return new Decimal(100)
+            },
+            cost: 100
+        },
+        21: {
+            unlocked() {
+                return hasUpgrade("sp", 16);
+            },
+            title: "why.",
+            description: "Question your existence, multiplying Prestige Point gain by 1000",
+            effect(){
+                return new Decimal(1000)
+            },
+            cost: 1500
+        },
+        22: {
+            unlocked() {
+                return hasUpgrade("sp", 21);
+            },
+            title: "<h3>LINEAR HELL</h3>",
+            description: "CRY OUT TO THE gwa TO SAVE YOU, MULTIPLYING PRESTIGE POINT GAIN BY 1e6",
+            effect(){
+                return new Decimal(1e6)
+            },
+            cost: 50000
+        },
     },
 })
 addLayer("up", {
@@ -210,7 +290,7 @@ addLayer("up", {
     },
     color: "#4e4e4e",
     requires() {
-        return new Decimal(1e35)
+        return new Decimal(5e6)
     }, // Can be a function that takes requirement increases into account
     resource: "Ultra Prestige Points", // Name of prestige currency
     baseResource: "Super Prestige Points", // Name of resource prestige is based on
@@ -233,7 +313,7 @@ addLayer("up", {
         return new Decimal(1)
     },
     effectDescription(){
-        return `subtracting the second Awakened Atom requirement by ${format(tmp.p.effect)}`
+        return `subtracting the second Awakened Atom requirement by ${format(tmp.up.effect)}`
     },
     branches: [""],
     row: 3, // Row the layer is in on the tree (0 is the first row)

@@ -67,6 +67,9 @@ addLayer("n", {
                 return hasMilestone("aa", 0)
         }
     },
+    doReset(resettingLayer){
+        if(!["sp","up"].includes(resettingLayer)){layerDataReset(this.layer,[])}
+    },
     branches: ["g", "v", "a", "o"],
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [

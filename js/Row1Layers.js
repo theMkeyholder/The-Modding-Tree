@@ -154,6 +154,13 @@ addLayer("v", {
     autoUpgrade() {
         return hasMilestone("aa", 0);
     },
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
+        }
+    },
     branches: ["a", "as"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -294,6 +301,13 @@ addLayer("a", {
         }
         else{
             return 1e9696
+        }
+    },
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
         }
     },
     branches: ["aa"],
@@ -458,6 +472,13 @@ addLayer("o", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
+    },
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
+        }
     },
     branches: ["vg"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
@@ -688,6 +709,13 @@ addLayer("vg", {
     }, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     resetDescription: "Reset for ",
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": false; break;
+            case "up": false; break;
+            default: true; break;
+        }
+    },
     branches: ["p"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
