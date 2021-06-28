@@ -190,7 +190,7 @@ addLayer("aa", {
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
-            key: "w", description: "W: Reset your Atoms for Awakened Atoms ", onPress() {
+            key: "w", description: "w: Reset your Atoms for Awakened Atoms ", onPress() {
                 if (canReset(this.layer)) doReset(this.layer)
             }
         },

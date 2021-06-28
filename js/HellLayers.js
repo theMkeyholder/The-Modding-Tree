@@ -356,6 +356,7 @@ addLayer("up", {
     onPrestige() {
         layerDataReset("sp");
         layerDataReset("p");
+        layerDataReset("m");
     },
     branches: [""],
     row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -367,7 +368,7 @@ addLayer("up", {
         },
     ],
     layerShown() {
-        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11) || hasUpgrade("m", 11) || hasUpgrade("m", 61)
+        return hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
     },
     milestones: {
         0: {
@@ -391,8 +392,8 @@ addLayer("up", {
             rewardDescription: "Reveal the Ultra Prestige Effect",
             canComplete: function() {return player.m.points.gte(5e37)},
             onEnter() {
-                doReset("up")
                 doReset("m")
+                doReset("up")
             },
         },
     },
@@ -493,13 +494,6 @@ addLayer("m", {
     upgrades: {
         rows: 10,
         cols: 10,
-        11: {
-            title: "Exit the Challenge",
-            onPurchase(){
-                layerDataReset("m")
-            },
-            cost: 0
-        },
         21: {
             title: "This Is Where It All Ends.",
             description: "Gain 1 Meta.",
@@ -507,32 +501,6 @@ addLayer("m", {
                 player.m.points = player.m.points.plus(1)
             },
             cost: 0
-        },
-        31: {
-            unlocked(){
-                return hasUpgrade("m", 21) && !hasUpgrade("m", 33)
-            },
-            title: "Meta.",
-            description(){
-                if (!hasUpgrade("m", 31))
-                    return "Pledge to Meta gwa."
-                else
-                    return "The True gwa will punish you for this."
-            },
-            cost: 1
-        },
-        32: {
-            unlocked(){
-                return hasUpgrade("m", 21) && !hasUpgrade("m", 33)
-            },
-            title: "Void.",
-            description(){
-                if (!hasUpgrade("m", 32))
-                   return "Channel the Energy of the Void."
-                else
-                    return "The Void has no power here."
-            },
-            cost: 1
         },
         33: {
             unlocked(){
