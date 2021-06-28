@@ -77,7 +77,7 @@ addLayer("n", {
         },
     ],
     layerShown() {
-        return true
+        return (!inChallenge("up", 11))
     },
     upgrades: {
         rows: 4,

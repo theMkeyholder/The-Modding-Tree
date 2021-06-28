@@ -39,7 +39,7 @@ addLayer("g", {
         },
     ],
     layerShown() {
-        return (!hasUpgrade("g", 21))
+        return (!hasUpgrade("g", 21)) && !inChallenge("up", 11)
     },
     doReset(resettingLayer){
         switch(resettingLayer) {
@@ -155,13 +155,6 @@ addLayer("v", {
     autoUpgrade() {
         return hasMilestone("aa", 0);
     },
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            default: true; break;
-        }
-    },
     branches: ["a", "as"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -172,7 +165,7 @@ addLayer("v", {
         },
     ],
     layerShown() {
-        return hasUpgrade("g", 21)
+        return hasUpgrade("g", 21) && !inChallenge("up", 11)
     },
     update(diff) {
         if (player.v.points.equals(0) && hasUpgrade("g", 21)){
@@ -295,20 +288,13 @@ addLayer("a", {
     baseAmount() {
         return player.points
     }, // Get the current amount of baseResource
-    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    type: "static", // normal: costeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee to gain currency depends on amount gained. static: cost depends on how much you already have
     base(){
         if (hasUpgrade("as", 15)){
             return 1e6
         }
         else{
             return 1e9696
-        }
-    },
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            default: true; break;
         }
     },
     branches: ["aa"],
@@ -321,7 +307,7 @@ addLayer("a", {
         },
     ],
     layerShown() {
-        return hasUpgrade("g", 21)
+        return hasUpgrade("g", 21) && !inChallenge("up", 11)
     },
     update(diff){
         if(player.a.points.gt(7)){
@@ -474,13 +460,6 @@ addLayer("o", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            default: true; break;
-        }
-    },
     branches: ["vg"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -491,7 +470,7 @@ addLayer("o", {
         },
     ],
     layerShown() {
-        return hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
+        return (hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
     },
     upgrades: {
         rows: 10,
@@ -713,17 +692,10 @@ addLayer("vg", {
         return 1e9696;
     },
     resetDescription: "Reset for ",
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            default: true; break;
-        }
-    },
     branches: ["p"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return (hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
+        return ((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
     },
     upgrades: {
         rows: 3,

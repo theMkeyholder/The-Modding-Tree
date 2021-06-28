@@ -32,10 +32,17 @@ addLayer("p", {
     autoUpgrade() {
         return hasMilestone("sp", 0);
     },
+    doReset(resettingLayer){
+        switch(resettingLayer) {
+            case "sp": layerDataReset("p"); break;
+            case "up": layerDataReset("p"); break;
+            default: layerDataReset("p", ['points']); break;
+        }
+    },
     branches: ["sp"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
+        return (hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
     },
     update(diff){
         let gain = new Decimal(0)
@@ -48,7 +55,7 @@ addLayer("p", {
             if (getBuyableAmount("p", 11).gte(1)) gain = gain.times((getBuyableAmount("p", 11)).times(2))
             if (player.sp.points.gte(1)) gain = gain.times(tmp.sp.effect)
             if (hasUpgrade("sp", 11)) gain = gain.times(upgradeEffect("sp", 11))
-            if (hasUpgrade("sp", 12)) gain = gain.times(upgradeEffect("sp", 12))
+            if (hasUpgrade("sp", 12) || hasUpgrade("up", 12)) gain = gain.times(upgradeEffect("sp", 12))
             if (hasUpgrade("sp", 15)) gain = gain.times(upgradeEffect("sp", 15))
             if (hasUpgrade("sp", 16)) gain = gain.times(upgradeEffect("sp", 16))
             if (hasUpgrade("sp", 21)) gain = gain.times(upgradeEffect("sp", 21))
@@ -59,7 +66,7 @@ addLayer("p", {
     buyables: {
         11: {
             unlocked(){
-                return hasUpgrade("p", 15) && !hasUpgrade("sp", 12)
+                return hasUpgrade("p", 15) && !(hasUpgrade("sp", 12) || hasUpgrade("up", 12))
             },
             cost() {return new Decimal(300000)},
             display() {return `<h3>PRESTIGE</h3><br>Reset your Prestige Points for a boost (capped at 50x)<br><h2>Currently: ${getBuyableAmount("p", 11).times(2)}x</h2><br>Requires 300,000 Prestige Points`},
@@ -141,10 +148,10 @@ addLayer("sp", {
     },
     color: "#8a8a8a",
     requires() {
-        if (!hasUpgrade("sp", 14))
-        return new Decimal(5e7)
+        if (hasUpgrade("sp", 14) || hasUpgrade("up", 14))
+        return new Decimal(1e6)
         else
-            return new Decimal(1e6)
+            return new Decimal(5e7)
     }, // Can be a function that takes requirement increases into account
     resource: "Super Prestige Points", // Name of prestige currency
     baseResource: "Prestige Points", // Name of resource prestige is based on
@@ -158,16 +165,32 @@ addLayer("sp", {
     }, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
+        if (hasMilestone("up", 0)) mult = mult.plus(9)
+        if (hasUpgrade("up", 11)) mult = mult.plus(upgradeEffect("up", 11))
+        if (hasUpgrade("up", 13)) mult = mult.plus(upgradeEffect("up", 13))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
+    },
+    passiveGeneration() {
+        if (hasMilestone("up", 0))
+        return new Decimal(0.01)
+    },
+    autoUpgrade() {
+        return hasUpgrade("up", 14);
     },
     effect(){
         return new Decimal(player.sp.points).plus(1).sqrt().plus(1)
     },
     effectDescription(){
         return `multiplying Prestige Point gain by ${format(tmp.sp.effect)}`
+    },
+    resetsNothing() {
+        return true;
+    },
+    onPrestige() {
+        layerDataReset("p");
     },
     branches: ["up"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
@@ -179,16 +202,16 @@ addLayer("sp", {
         },
     ],
     layerShown() {
-        return hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
+        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
     },
     milestones: {
         0: {
             unlocked(){
-                return hasUpgrade("sp", 13)
+                return hasUpgrade("sp", 13) || hasMilestone("up", 0)
             },
             requirementDescription: "2 Super Prestige Points",
             effectDescription: "Autobuy Prestige Upgrades",
-            done() { return player.sp.points.gte(2) }
+            done() { return player.sp.points.gte(2) || hasMilestone("up", 0) }
         },
     },
     upgrades: {
@@ -300,7 +323,7 @@ addLayer("up", {
     }, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent(){
-        return new Decimal(0.3)
+        return new Decimal(0.1)
     }, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         let mult = new Decimal(1)
@@ -310,10 +333,29 @@ addLayer("up", {
         return new Decimal(1)
     },
     effect(){
-        return new Decimal(1)
+        if (hasChallenge("up", 11))
+        return new Decimal(player.up.points)
+        else
+            return new Decimal(0)
     },
     effectDescription(){
-        return `subtracting the second Awakened Atom requirement by ${format(tmp.up.effect)}`
+        if (hasChallenge("up", 11))
+        return `lowering the second Awakened Atom cost base by ${format(tmp.up.effect.div(7))}`
+        else
+            return `lowering the....?`
+    },
+    canReset(){
+        if (inChallenge("up", 11))
+            return false
+        else
+            return (player.sp.points.gte(5e6))
+    },
+    resetsNothing() {
+        return true;
+    },
+    onPrestige() {
+        layerDataReset("sp");
+        layerDataReset("p");
     },
     branches: [""],
     row: 3, // Row the layer is in on the tree (0 is the first row)
@@ -325,18 +367,266 @@ addLayer("up", {
         },
     ],
     layerShown() {
-        return hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
+        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11) || hasUpgrade("m", 11) || hasUpgrade("m", 61)
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 Ultra Prestige Point",
+            effectDescription: "Automatically gain 1% of your Super Prestige Point gain every second, multiply Super Prestige Point gain by 9, and the Super Prestige Milestone is always applied!",
+            done() { return player.up.points.gte(1) }
+        },
+    },
+    challenges: {
+        11: {
+            unlocked(){return hasUpgrade("up", 15)},
+            name: "The Final Test",
+            challengeDescription: "You are trapped in the lowest depth of Hell",
+            goalDescription(){
+              if (!hasUpgrade("m", 61)){
+                  return "You'll know when it happens"
+              }
+              else
+                  return "5e37 Meta."
+            },
+            rewardDescription: "Reveal the Ultra Prestige Effect",
+            canComplete: function() {return player.m.points.gte(5e37)},
+            onEnter() {
+                doReset("up")
+                doReset("m")
+            },
+        },
     },
     upgrades: {
         rows: 10,
         cols: 10,
         11: {
-            title: "WIP",
-            description: ".",
+            title: "Hell 3: Escape?",
+            description: "Multiply your Super Prestige Point gain by Prestige Points",
+            effect(){
+                return new Decimal(player.p.points.plus(1).log(10).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("up", 11))}x`
+            },
+            cost: 1
+        },
+        12: {
+            unlocked(){
+                return hasUpgrade("up", 11)
+            },
+            title: "Time to Make this Reset Mindless",
+            description: "The effect of 'Un-Prestiged' is always applied",
+            cost: 1
+        },
+        13: {
+            unlocked(){
+                return hasUpgrade("up", 12)
+            },
+            title: "TWO!!",
+            description: "gwa the gwa the gwa the gwa the<br>(multiply your Super Prestige Point gain by Super Prestige Points)",
+            effect(){
+                return new Decimal(player.sp.points.plus(1).log(2).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("up", 13))}x`
+            },
+            cost: 2
+        },
+        14: {
+            unlocked(){
+                return hasUpgrade("up", 13)
+            },
+            title: "Reset++++",
+            description: "Automatically buy Super Prestige Upgrades, Un-Timewalled is always applied",
+            cost: 2
+        },
+        15: {
+            unlocked(){
+                return hasUpgrade("up", 14)
+            },
+            title: "It's time to escape.",
+            description: "Unlock a Ultra Prestige Challenge",
+            cost: 2
+        },
+    },
+})
+addLayer("m", {
+    name: "Meta", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "M", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#660505",
+    requires() {
+        return new Decimal(1e9696)
+    }, // Can be a function that takes requirement increases into account
+    resource: "Meta", // Name of prestige currency
+    exponent(){
+        return new Decimal(0.5)
+    }, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    branches: [""],
+    row: 0, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        return inChallenge("up", 11) && !hasUpgrade("m", 11)
+    },
+    update(diff){
+        let gain = new Decimal(0)
+        if (hasUpgrade("m", 41)) gain = gain.plus(0.01)
+        if (hasUpgrade("m", 42)) gain = gain.times(upgradeEffect("m", 42))
+        if (hasUpgrade("m", 51)) gain = gain.times(upgradeEffect("m", 51))
+        if (hasUpgrade("m", 52)) gain = gain.times(upgradeEffect("m", 52))
+        if (hasUpgrade("m", 53)) gain = gain.times(upgradeEffect("m", 53))
+        if (hasUpgrade("m", 61)) gain = gain.times(upgradeEffect("m", 61))
+        player.m.points = player.m.points.plus(gain)
+    },
+    upgrades: {
+        rows: 10,
+        cols: 10,
+        11: {
+            title: "Exit the Challenge",
+            onPurchase(){
+                layerDataReset("m")
+            },
+            cost: 0
+        },
+        21: {
+            title: "This Is Where It All Ends.",
+            description: "Gain 1 Meta.",
+            onPurchase() {
+                player.m.points = player.m.points.plus(1)
+            },
+            cost: 0
+        },
+        31: {
+            unlocked(){
+                return hasUpgrade("m", 21) && !hasUpgrade("m", 33)
+            },
+            title: "Meta.",
+            description(){
+                if (!hasUpgrade("m", 31))
+                    return "Pledge to Meta gwa."
+                else
+                    return "The True gwa will punish you for this."
+            },
+            cost: 1
+        },
+        32: {
+            unlocked(){
+                return hasUpgrade("m", 21) && !hasUpgrade("m", 33)
+            },
+            title: "Void.",
+            description(){
+                if (!hasUpgrade("m", 32))
+                   return "Channel the Energy of the Void."
+                else
+                    return "The Void has no power here."
+            },
+            cost: 1
+        },
+        33: {
+            unlocked(){
+                return hasUpgrade("m", 21)
+            },
+            title: "True.",
+            description(){
+                if (!hasUpgrade("m", 33))
+                    return "Pray to True gwa."
+                else
+                    return "Good choice, mortal."
+            },
+            onPurchase() {
+                player.m.points = player.m.points.plus(1)
+            },
+            cost: 1
+        },
+        41: {
+            unlocked(){
+                return hasUpgrade("m", 33)
+            },
+            title: "Meta Shattering",
+            description: "Gain 0.01 Meta every second",
+            onPurchase() {
+                player.m.points = player.m.points.plus(1)
+            },
+            effect(){
+                return new Decimal(0.01)
+            },
+            cost: 1
+        },
+        42: {
+            unlocked(){
+                return hasUpgrade("m", 41)
+            },
+            title: "Meta Ascension",
+            description: "Multiply Meta Gain by Meta",
+            effect(){
+                return new Decimal(player.m.points.plus(1).log(2).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("m", 42))}x`
+            },
+            cost: 1
+        },
+        51: {
+            unlocked(){
+                return hasUpgrade("m", 42)
+            },
+            title: "Void Shards",
+            description: "Multiply Meta Gain by the slog of Meta raised to the 3rd Power",
+            effect(){
+                return new Decimal(player.m.points.plus(1).slog().pow(3).plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("m", 51))}x`
+            },
+            cost: 30
+        },
+        52: {
+            unlocked(){
+                return hasUpgrade("m", 42)
+            },
+            title: "Atoms",
+            description: "Annihilate Meta Atoms, multiplying Meta Gain by 9",
             effect(){
                 return new Decimal(9)
             },
-            cost: 1
+            cost: 200
+        },
+        53: {
+            unlocked(){
+                return hasUpgrade("m", 42)
+            },
+            title: "Oddities",
+            description: "Odd, Strange, Weird, Bizarre, Unusual, Abnormal, Unconventional, Outlandish, Freaky, Uncommon, Irregular, Questionable<br> Multiply Meta Gain by the amount of words before 'Multiply' in this description.",
+            effect(){
+                return new Decimal(12)
+            },
+            cost: 7000
+        },
+        61: {
+            unlocked(){
+                return hasUpgrade("m", 53)
+            },
+            title: "NXF",
+            description: "Now with Xtra Flame.<br>Multiply Meta Gain by Fire",
+            effect(){
+                return new Decimal(player.points.sqrt())
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("m", 61))}x`
+            },
+            cost: 125000
         },
     },
 })

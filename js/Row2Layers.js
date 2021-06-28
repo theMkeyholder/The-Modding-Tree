@@ -35,7 +35,7 @@ addLayer("g2", {
     },
     row: 96, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return (hasUpgrade("g", 21))
+        return (hasUpgrade("g", 21)) && !inChallenge("up", 11)
     },
     upgrades: {
         rows: 3,
@@ -76,18 +76,10 @@ addLayer("as", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            case "aa": true; break;
-            default: true; break;
-        }
-    },
     branches: ["aa"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return hasUpgrade("a", 12)
+        return hasUpgrade("a", 12) && !inChallenge("up", 11)
     },
     effect(){
         if (!hasUpgrade("aa", 11))
@@ -183,25 +175,17 @@ addLayer("aa", {
     resource: "Awakened Atoms", // Name of prestige currency
     baseResource: "Atoms", // Name of resource prestige is based on
     resetDescription: "Reset for ",
-    exponent: 5.2, // Prestige currency exponent
-    gainMult() { // Calculate the multiplier for main currency from bonuses
-        let mult = new Decimal(1)
-        return mult
-    },
-    gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+    base(){
+        if (player.aa.points.equals(1)){
+            return new Decimal(2).minus(tmp.up.effect.div(7))
+        }
+        else
+            return new Decimal(2)
     },
     baseAmount() {
         return player.a.points
     }, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    doReset(resettingLayer){
-        switch(resettingLayer) {
-            case "sp": false; break;
-            case "up": false; break;
-            default: true; break;
-        }
-    },
     branches: [""],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -212,7 +196,7 @@ addLayer("aa", {
         },
     ],
     layerShown() {
-        return hasChallenge("a", 12) || player.aa.total.gte(1)
+        return (hasChallenge("a", 12) || player.aa.total.gte(1)) && !inChallenge("up", 11)
     },
     effect(){
         if (player.aa.points.gte(1))
