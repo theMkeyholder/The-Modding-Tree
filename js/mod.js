@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2 BETA 4",
+	num: "v1.2",
 	name: "Linear Hell",
 }
 
@@ -89,7 +89,7 @@ function addedPlayerData() { return {
 
 // Display extra things at the top of the page
 var displayThings = [
-	`Current Endgame: Awakened Atoms`,
+	`Current Endgame: 2 Awakened Atoms`,
 	`The Real Game Begins after Completing the gwa Layer`
 ]
 
