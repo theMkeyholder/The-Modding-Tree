@@ -165,7 +165,7 @@ addLayer("aa", {
         0: {
             requirementDescription: "1 Awakened Atom",
             effectDescription: "Gain 100% of Extra Flame every second, Autobuy Extra Flame Upgrades, gain 100% of Void Shard Gain every second, Autobuy Void Shard Upgrades, and lower the costs of Flamemaster96 and I ran out of names",
-            done() { return player.v.points.gte(1) }
+            done() { return player.aa.points.gte(1) }
         },
     },
     upgrades: {
