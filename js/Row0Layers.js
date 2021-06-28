@@ -6,13 +6,54 @@ addLayer("ghost1", {
             return "ghost"
     },
 })
-addLayer("ghost2", {
-    row: 3, // Row the layer is in on the tree (0 is the first row)
-    position: 2,
-    layerShown() {
-        if (hasUpgrade("vg", 21))
-            return "ghost"
+addLayer("g2", {
+    name: "gwa", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "gwa", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
     },
+    image: "https://cdn.discordapp.com/emojis/844745243592884264.png?v=1",
+    color: "#ffffff",
+    requires: new Decimal(1), // Can be a function that takes requirement increases into account
+    resource: "true gwa", // Name of prestige currency
+    baseResource: "", // Name of resource prestige is based on
+    baseAmount() {
+        return new Decimal(0)
+    }, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.5, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        let mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    resetDescription: "Reset for ",
+    branches: [],
+    unlocked() {
+        return hasUpgrade("n", 42) || player.g.points.gte(1) || hasUpgrade("g", 11);
+    },
+    canReset() {
+        return false
+    },
+    row: 2, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        return (hasUpgrade("g", 21)) && !inChallenge("up", 11)
+    },
+    upgrades: {
+        rows: 3,
+        cols: 3,
+        11: {
+            title: "the true gwa.",
+            description: "unleash the true power of gwa.",
+            cost: 1
+        },
+    }
 })
 addLayer("n", {
     name: "NXF", // This is optional, only used in a few places, If absent it just uses the layer id.
