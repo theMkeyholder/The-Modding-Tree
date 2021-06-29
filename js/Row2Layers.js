@@ -172,10 +172,6 @@ addLayer("aa", {
         rows: 10,
         cols: 10,
         11: {
-            unlocked(){
-                if (player.aa.points.gte(1))
-                    return true
-            },
             title: "Quite Peculiar",
             description: "[Only works if Atomic Awakening is completed] Disable the effect of Atomic Shards, lower the base requirement for Oddities to 3e21, reset Oddities, but open up a portal to the Odd",
             cost: 1,
@@ -183,6 +179,13 @@ addLayer("aa", {
                 player.aa.points = player.aa.points.sub(1)
                 player.o.points = player.o.points.sub(player.o.points)
             }
+        },
+        21: {
+            unlocked(){
+                return hasChallenge("up", 11)
+            },
+            title: "Endless Possibilities",
+            cost: 2,
         },
     }
 })

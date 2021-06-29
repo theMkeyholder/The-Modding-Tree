@@ -381,12 +381,12 @@ addLayer("a", {
     },
     challenges: {
         11: {
-            unlocked(){return hasUpgrade("a", 11)},
+            unlocked(){return hasUpgrade("a", 11) || hasUpgrade("r", 11)},
             name: "Atomic Annihilation",
             challengeDescription: "Invert all Upgrade Effects, disable Upgrades that raise something to a power, the Void Milestone is disabled, each upgrade multiplies production by 2 (before all other effects), and reset EVERYTHING BEFORE ATOMS.",
             goalDescription: "At least 4 NXF Upgrades",
             rewardDescription: "...",
-            canComplete: function() {return new Decimal(player.n.upgrades.length).gte(4)},
+            canComplete: function() {return new Decimal(player.n.upgrades.length).gte(4) || hasUpgrade("r", 11)},
             onEnter() {
                 player.points = player.points.sub(player.points)
                 player.n.points = player.n.points.sub(player.n.points.sub(5))
@@ -399,12 +399,12 @@ addLayer("a", {
             }
         },
         12: {
-            unlocked(){return hasUpgrade("a", 31)},
+            unlocked(){return hasUpgrade("a", 31) || hasUpgrade("r", 11)},
             name: "Atomic Awakening",
             challengeDescription: "All effects of Atomic Annihilation, Atomic Shattering uses a better formula, disable all new Atom Upgrades (except Atomic Shattering), Void Shards stop converting to Atomic Shards, and reset EVERYTHING BEFORE ATOMS.",
             goalDescription: "Buy the final NXF Upgrade",
             rewardDescription: "Awaken The Atoms",
-            canComplete: function() {return hasUpgrade("n", 42)},
+            canComplete: function() {return hasUpgrade("n", 42) || hasUpgrade("r", 11)},
             onEnter() {
                 player.points = player.points.sub(player.points)
                 player.n.points = player.n.points.sub(player.n.points.sub(5))

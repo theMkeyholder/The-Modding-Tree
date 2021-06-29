@@ -28,7 +28,13 @@ addLayer("r", {
     branches: [],
     row: 3, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return hasChallenge("up", 11)
+        return hasUpgrade("aa", 21)
+    },
+    update(diff){
+      if (hasUpgrade("r", 11) && !hasChallenge("a", 11) | !hasChallenge("a", 12)){
+          canCompleteChallenge("a", 11)
+          canCompleteChallenge("a", 12)
+      }
     },
     upgrades: {
         rows: 10,
@@ -38,7 +44,7 @@ addLayer("r", {
                 return (getBuyableAmount("r", 11).gte(1))
             },
             title: "gwa Reawakening",
-            description: "Multiply Fire gain based on your Extra Flame",
+            description: "Multiply Fire gain based on your Extra Flame and Autocomplete the Atom challenges",
             effect(){
                 return new Decimal(player.n.points.plus(1).log(100).plus(1))
             },
