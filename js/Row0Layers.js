@@ -41,7 +41,7 @@ addLayer("g2", {
     canReset() {
         return false
     },
-    row: 2, // Row the layer is in on the tree (0 is the first row)
+    row: 96, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
         return (hasUpgrade("g", 21)) && !inChallenge("up", 11)
     },

@@ -3,7 +3,7 @@ let modInfo = {
 	id: "flametree",
 	author: "FlamemasterNXF",
 	pointsName: "Fire",
-	modFiles: ["tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js"],
+	modFiles: ["tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js"],
 
 	discordName: "My Discord server!",
 	discordLink: "https://discord.gg/Js93DSjBAY",
@@ -62,6 +62,7 @@ function getPointGen() {
 		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
 		if (player.aa.best.gte(1)) gain = gain.times(tmp.aa.effect)
 		if (hasUpgrade("p", 11)) gain = gain.times(tmp.p.effect)
+		if (hasUpgrade("r", 11)) gain = gain.times(upgradeEffect("r", 11))
 	}
 	else {
 		if (new Decimal(player.n.upgrades.length).gte(1)) gain = gain.times(player.n.upgrades.length).times(2)
@@ -79,6 +80,7 @@ function getPointGen() {
 		if (hasUpgrade("v", 14)) gain = gain.div(upgradeEffect("v", 14))
 		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
 		if (player.aa.points.gte(1)) gain = gain.times(tmp.aa.effect)
+		if (hasUpgrade("r", 11)) gain = gain.times(upgradeEffect("r", 11))
 	}
 	return gain
 }

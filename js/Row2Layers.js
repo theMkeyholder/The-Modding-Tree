@@ -137,7 +137,7 @@ addLayer("aa", {
         return player.a.points
     }, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    branches: [""],
+    branches: ["r"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
@@ -173,7 +173,8 @@ addLayer("aa", {
         cols: 10,
         11: {
             unlocked(){
-                return hasUpgrade("a", 12)
+                if (player.aa.points.gte(1))
+                    return true
             },
             title: "Quite Peculiar",
             description: "[Only works if Atomic Awakening is completed] Disable the effect of Atomic Shards, lower the base requirement for Oddities to 3e21, reset Oddities, but open up a portal to the Odd",

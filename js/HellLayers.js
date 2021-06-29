@@ -211,7 +211,7 @@ addLayer("sp", {
             },
             requirementDescription: "2 Super Prestige Points",
             effectDescription: "Autobuy Prestige Upgrades",
-            done() { return player.sp.points.gte(2) || hasMilestone("up", 0) }
+            done() { return player.sp.points.gte(2) && hasUpgrade("sp", 13)|| hasMilestone("up", 0) }
         },
     },
     upgrades: {
@@ -358,7 +358,7 @@ addLayer("up", {
         layerDataReset("p");
         layerDataReset("m");
     },
-    branches: [""],
+    branches: ["r"],
     row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
