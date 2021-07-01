@@ -13,12 +13,12 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.2",
-	name: "Linear Hell",
+	num: "1.3 Dev",
+	name: "[]",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v1.2</h3><br>
+	<h3>v1.3</h3><br>
 		- I'm not using this lol.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
@@ -60,8 +60,8 @@ function getPointGen() {
 		if (hasUpgrade("a", 21)) gain = gain.times(upgradeEffect("a", 21))
 		if (hasUpgrade("a", 22)) gain = gain.times(upgradeEffect("a", 22))
 		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
-		if (player.aa.best.gte(1)) gain = gain.times(tmp.aa.effect)
-		if (hasUpgrade("p", 11)) gain = gain.times(tmp.p.effect)
+		if (player.aa.total.gte(1)) gain = gain.times(tmp.aa.effect)
+		if ((hasUpgrade("p", 11)) && !(hasUpgrade("r", 11))) gain = gain.times(tmp.p.effect).plus(1)
 		if (hasUpgrade("r", 11)) gain = gain.times(upgradeEffect("r", 11))
 	}
 	else {

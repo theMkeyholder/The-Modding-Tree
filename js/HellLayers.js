@@ -24,7 +24,10 @@ addLayer("p", {
         return new Decimal(1)
     },
     effect(){
+        if (!hasUpgrade("r", 11))
         return new Decimal(player.p.points.plus(1).log(10).plus(1))
+        else
+            return new Decimal(1)
     },
     effectDescription(){
         return `multiplying Fire gain by ${format(tmp.p.effect)}`
@@ -42,7 +45,7 @@ addLayer("p", {
     branches: ["sp"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return (hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
+        return ((hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasUpgrade("r", 11))
     },
     update(diff){
         let gain = new Decimal(0)
@@ -192,6 +195,10 @@ addLayer("sp", {
     onPrestige() {
         layerDataReset("p");
     },
+    deactivated(){
+        if (hasUpgrade("r", 11))
+            return true
+    },
     branches: ["up"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -202,7 +209,7 @@ addLayer("sp", {
         },
     ],
     layerShown() {
-        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
+        return ((hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasUpgrade("r", 11))
     },
     milestones: {
         0: {
@@ -358,6 +365,10 @@ addLayer("up", {
         layerDataReset("p");
         layerDataReset("m");
     },
+    deactivated(){
+        if (hasUpgrade("r", 11))
+            return true
+    },
     branches: ["r"],
     row: 3, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -368,13 +379,13 @@ addLayer("up", {
         },
     ],
     layerShown() {
-        return hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)
+        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11))  && !(hasUpgrade("r", 11))
     },
     milestones: {
         0: {
             requirementDescription: "1 Ultra Prestige Point",
             effectDescription: "Automatically gain 1% of your Super Prestige Point gain every second, multiply Super Prestige Point gain by 9, and the Super Prestige Milestone is always applied!",
-            done() { return player.up.points.gte(1) }
+            done() { return player.up.points.gte(1) && !hasUpgrade("r", 11) }
         },
     },
     challenges: {

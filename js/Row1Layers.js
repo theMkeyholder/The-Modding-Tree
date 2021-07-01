@@ -338,7 +338,12 @@ addLayer("a", {
                 return new Decimal(9)
             },
             fullDisplay: "<h3>Atomic 9</h3><br>Multiply your Fire gain by 9<br><br>Requires: 1 Atom",
-            canAfford(){return (player.a.points.gte(1))},
+            canAfford(){
+                if (!hasMilestone("r", 0))
+                return (player.a.points.gte(1))
+                else
+                    return (true)
+            },
         },
         22: {
             unlocked(){
@@ -346,12 +351,17 @@ addLayer("a", {
             },
             effect(){
                 if (player.a.points.lessThan(11))
-                    return new Decimal(player.a.points)
+                    return new Decimal(player.a.points).plus(1)
                 else
                     return new Decimal(10)
             },
             fullDisplay: "<h3>Atomic Repetition</h3><br>Multiply your Fire Gain by your Atoms (capped at 10x)<br><br>Requires: 2 Atoms and 1 Oddity",
-            canAfford(){return (player.a.points.gte(2) && player.o.points.gte(1))},
+            canAfford(){
+                if (!hasMilestone("r", 0))
+                return (player.a.points.gte(2) && player.o.points.gte(1))
+                else
+                    return true
+            },
         },
         23: {
             unlocked(){
@@ -367,7 +377,12 @@ addLayer("a", {
             fullDisplay() {
                 return `<h3>Atomic Shattering</h3><br>Atomic Shards multiply your Fire gain<br><br>Requires: 5 Atoms and 100 Oddities<br>Currently: ${format(upgradeEffect("a", 23))}x`
             },
-            canAfford(){return (player.a.points.gte(5) && player.o.points.gte(100))},
+            canAfford(){
+                if (!hasMilestone("r", 0))
+                return (player.a.points.gte(5) && player.o.points.gte(100))
+                else
+                    return (true)
+            },
         },
         31: {
             unlocked(){
@@ -376,7 +391,12 @@ addLayer("a", {
             fullDisplay() {
                 return `<h3>Atomic Awakening.</h3><br>Disable the last Atomic Shard Upgrade but unlock <h3>Atomic Awakening</h3>.<br><br>Requires: 7 Atoms and 9600 Oddities`
             },
-            canAfford(){return (player.a.points.gte(7) && player.o.points.gte(9600))},
+            canAfford(){
+                if (!hasMilestone("r", 0))
+                return (player.a.points.gte(7) && player.o.points.gte(9600))
+                else
+                    return (true)
+            },
         },
     },
     challenges: {
@@ -460,6 +480,10 @@ addLayer("o", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+    deactivated(){
+        if (hasUpgrade("r", 11))
+            return true
+    },
     branches: ["vg"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -470,7 +494,7 @@ addLayer("o", {
         },
     ],
     layerShown() {
-        return (hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
+        return ((hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasUpgrade("r", 11))
     },
     upgrades: {
         rows: 10,
@@ -650,7 +674,7 @@ addLayer("o", {
             description: "Multiply Abnormal's effect by the log(20) of itself",
             effect(){
                 if (upgradeEffect("o", 16).gte(1))
-                return new Decimal(upgradeEffect("o", 16)).plus(1).log(20).plus(1)
+                    return new Decimal(upgradeEffect("o", 16)).plus(1).log(20).plus(1)
                 else
                     return new Decimal(1)
             },
@@ -692,10 +716,14 @@ addLayer("vg", {
         return 1e9696;
     },
     resetDescription: "Reset for ",
+    deactivated() {
+        if (hasUpgrade("r", 11))
+            return true
+    },
     branches: ["p"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return ((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)
+        return (((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !hasUpgrade("r", 11)
     },
     upgrades: {
         rows: 3,

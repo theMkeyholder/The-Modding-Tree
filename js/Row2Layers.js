@@ -180,12 +180,5 @@ addLayer("aa", {
                 player.o.points = player.o.points.sub(player.o.points)
             }
         },
-        21: {
-            unlocked(){
-                return hasChallenge("up", 11)
-            },
-            title: "Endless Possibilities",
-            cost: 2,
-        },
     }
 })
