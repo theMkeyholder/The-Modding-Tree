@@ -137,6 +137,20 @@ addLayer("p", {
             },
             cost: 2500
         },
+        clickables: {
+            11: {
+                unlocked(){
+                    return (!hasUpgrade("p", 11))
+                },
+                title() {return "Skip"},
+                display() {return "<h3>READ CAREFULLY, this Option will disappear after you buy the first Prestige Upgrade.</h3><br>THIS IS A OPTION. THIS IS NOT PART OF THE STORY. ONLY BUY THIS IF YOU WANT TO, IT IS NOT REQUIRED!!! Gain Eternal Shame, but skip the Hell Layers"},
+                canClick(){return true},
+                onClick(){
+                    player.up.challenges[11] = 1
+                    player.up.points = new Decimal(7)
+                },
+            },
+        }
     },
 })
 addLayer("sp", {
