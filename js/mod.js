@@ -92,7 +92,8 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	`Current Endgame: 2 Awakened Atoms`,
-	`The Real Game Begins after Completing the gwa Layer`
+	`The Real Game Begins after Completing the gwa Layer`,
+	`WARNING: ALPHA. THIS IS BUGFIX VERSION.`
 ]
 
 // Determines when the game "ends"
