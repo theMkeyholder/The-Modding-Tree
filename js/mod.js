@@ -1,6 +1,6 @@
 let modInfo = {
 	name: "The Flame Tree",
-	id: "flametree",
+	id: "flametreetest",
 	author: "FlamemasterNXF",
 	pointsName: "Fire",
 	modFiles: ["tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js"],
