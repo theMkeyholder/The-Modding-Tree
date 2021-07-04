@@ -141,12 +141,15 @@ addLayer("v", {
         let mult = new Decimal(1)
         if (hasUpgrade("as", 12)) mult = mult.times(upgradeEffect("as", 12))
         if (hasUpgrade("as", 14)) mult = mult.times(upgradeEffect("as", 14))
+        if (hasUpgrade("ha", 22)) mult = mult.times(upgradeEffect("ha", 22))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
     passiveGeneration() {
+        if (hasMilestone("r", 0))
+            return true
         if (!hasMilestone("aa", 0))
             return hasUpgrade("as", 11);
         else
@@ -155,7 +158,7 @@ addLayer("v", {
     autoUpgrade() {
         return hasMilestone("aa", 0);
     },
-    branches: ["a", "as"],
+    branches: ["a", "as", "ha"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {
@@ -218,12 +221,12 @@ addLayer("v", {
         },
         13: {
             unlocked(){
-                return (!inChallenge("a", 12))
+                return (!inChallenge("a", 12) && !hasMilestone("r", 0))
             },
             title: "Void",
             description: "Multiply Fire gain by the slog of Fire raised to the 2nd Power",
             effect(){
-                if (hasUpgrade("a", 11))
+                if (hasUpgrade("a", 11) || hasMilestone("r", 0))
                     return new Decimal(1)
                 else{
                     if (player.points.gte(1))
@@ -239,12 +242,12 @@ addLayer("v", {
         },
         14: {
             unlocked(){
-                return (!inChallenge("a", 12))
+                return (!inChallenge("a", 12) && !hasMilestone("r", 0))
             },
             title: "Void II",
             description: "Multiply Fire gain by the slog of Fire raised to the 5th Power",
             effect(){
-                if (hasUpgrade("a", 11))
+                if (hasUpgrade("a", 11) || hasMilestone("r", 0))
                     return new Decimal(1)
                 else{
                     if (player.points.gte(1))
@@ -307,7 +310,7 @@ addLayer("a", {
         },
     ],
     layerShown() {
-        return hasUpgrade("g", 21) && !inChallenge("up", 11)
+        return (hasUpgrade("g", 21) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
     },
     update(diff){
         if(player.a.points.gt(7)){
@@ -318,13 +321,16 @@ addLayer("a", {
         rows: 10,
         cols: 10,
         11: {
+            unlocked(){
+                return !(hasMilestone("r", 0))
+            },
             title: "Atomic Destruction",
             description: "Annihilate Atoms, which deactivates Void and Void II, but unlock something new?",
             cost: 1
         },
         12: {
             unlocked(){
-                return hasChallenge("a", 11)
+                return (hasChallenge("a", 11) && !(hasMilestone("r", 0)))
             },
             title: "Atomic Shards",
             description: "Annihilate Annihilated Atoms, which unlocks 2 new Layers.",
@@ -386,7 +392,7 @@ addLayer("a", {
         },
         31: {
             unlocked(){
-                return hasUpgrade("a", 23)
+                return hasUpgrade("a", 23) && !hasMilestone("r", 0)
             },
             fullDisplay() {
                 return `<h3>Atomic Awakening.</h3><br>Disable the last Atomic Shard Upgrade but unlock <h3>Atomic Awakening</h3>.<br><br>Requires: 7 Atoms and 9600 Oddities`
@@ -494,7 +500,7 @@ addLayer("o", {
         },
     ],
     layerShown() {
-        return ((hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasUpgrade("r", 11))
+        return ((hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
     },
     upgrades: {
         rows: 10,
@@ -723,7 +729,7 @@ addLayer("vg", {
     branches: ["p"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return (((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !hasUpgrade("r", 11)
+        return (((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !hasMilestone("r", 0)
     },
     upgrades: {
         rows: 3,
@@ -760,4 +766,64 @@ addLayer("vg", {
             cost: 1
         },
     }
+})
+addLayer("ha", {
+    name: "Hyper Real Atoms", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "HA", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() {
+        return {
+            unlocked: true,
+            points: new Decimal(0),
+        }
+    },
+    color: "#4700ff",
+    requires() {
+        return new Decimal(5e18)
+    },
+    // Can be a function that takes requirement increases into account
+    resource: "Hyper Real Atoms", // Name of prestige currency
+    baseResource: "Fire", // Name of resource prestige is based on
+    resetDescription: "Shatter your Atoms for ",
+    baseAmount() {
+        return player.points
+    }, // Get the current amount of baseResource
+    type: "normal", // normal: costeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee to gain currency depends on amount gained. static: cost depends on how much you already have
+    branches: ["r"],
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    layerShown() {
+        return hasMilestone("r", 0)
+    },
+    passiveGeneration() {
+        return hasMilestone("r", 0);
+    },
+    exponent() {
+        return 0.001;
+    },
+    gainMult(){
+        return new Decimal(1)
+    },
+    upgrades: {
+        rows: 10,
+        cols: 10,
+        11: {
+            effect(){
+                return new Decimal(99)
+            },
+            title: "Hyper Atomic 9",
+            description: "Multiply your Fire gain by 99",
+            cost: 10
+        },
+        22: {
+            title: "Hyper Atomic Enhancement",
+            description: "Hyper Real Atoms boost Void Shard gain",
+            effect(){
+                return new Decimal(player.ha.points.plus(1).sqrt().plus(1))
+            },
+            effectDisplay(){
+                return `${format(upgradeEffect("ha", 22))}x`
+            },
+            cost: 20
+        },
+    },
 })

@@ -224,6 +224,8 @@ addLayer("n", {
                 return `^${format(upgradeEffect("n", 32))}`;
             },
             cost(){
+                if (hasMilestone("r", 0))
+                    return new Decimal(0)
                 if (!hasMilestone("aa", 0))
                     return new Decimal(1.0096e4)
                 else
@@ -234,6 +236,8 @@ addLayer("n", {
             title: "I ran out of names",
             description: "Wow that last Upgrade really made progress take off! Disable all row 2 upgrades, but Flamemaster96 has a much better formula [log(9e6) => log(90)]",
             cost() {
+                if (hasMilestone("r", 0))
+                    return new Decimal(0)
                 if (!inChallenge("a", 12)){
                     if (!hasMilestone("aa", 0))
                         return new Decimal(9.6e4)

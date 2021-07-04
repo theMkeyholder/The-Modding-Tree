@@ -45,7 +45,7 @@ addLayer("p", {
     branches: ["sp"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return ((hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasUpgrade("r", 11))
+        return ((hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
     },
     update(diff){
         let gain = new Decimal(0)
@@ -223,7 +223,7 @@ addLayer("sp", {
         },
     ],
     layerShown() {
-        return ((hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasUpgrade("r", 11))
+        return ((hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
     },
     milestones: {
         0: {
@@ -393,7 +393,7 @@ addLayer("up", {
         },
     ],
     layerShown() {
-        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11))  && !(hasUpgrade("r", 11))
+        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11))  && !(hasMilestone("r", 0))
     },
     milestones: {
         0: {

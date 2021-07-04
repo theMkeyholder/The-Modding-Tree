@@ -30,7 +30,7 @@ addLayer("as", {
     branches: ["aa"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return hasUpgrade("a", 12) && !inChallenge("up", 11)
+        return ((hasUpgrade("a", 12) || hasMilestone("r", 0)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
     },
     effect(){
         if (!hasUpgrade("aa", 11))
@@ -96,7 +96,7 @@ addLayer("as", {
             title: "Atomic Synergy",
             description: "Atomic Shards also lower the Atom requirement, and unlock new Atom upgrades",
             effect(){
-                if (hasUpgrade("a", 31))
+                if (hasUpgrade("a", 31) && !hasMilestone("r", 0))
                     return new Decimal(1)
                 else
                     return new Decimal(player.as.points.plus(1).pow(1.8))
@@ -147,7 +147,7 @@ addLayer("aa", {
         },
     ],
     layerShown() {
-        return (hasChallenge("a", 12) || player.aa.total.gte(1)) && !inChallenge("up", 11)
+        return ((hasChallenge("a", 12) || player.aa.total.gte(1)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
     },
     effect(){
         if (player.aa.points.gte(1))
@@ -172,6 +172,9 @@ addLayer("aa", {
         rows: 10,
         cols: 10,
         11: {
+            unlocked(){
+                return !hasMilestone("r", 0)
+            },
             title: "Quite Peculiar",
             description: "[Only works if Atomic Awakening is completed] Disable the effect of Atomic Shards, lower the base requirement for Oddities to 3e21, reset Oddities, but open up a portal to the Odd",
             cost: 1,
