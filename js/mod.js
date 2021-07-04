@@ -62,7 +62,6 @@ function getPointGen() {
 		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
 		if (player.aa.total.gte(1)) gain = gain.times(tmp.aa.effect)
 		if ((hasUpgrade("p", 11)) && !(hasUpgrade("r", 11))) gain = gain.times(tmp.p.effect).plus(1)
-		if (hasUpgrade("ha", 11)) gain = gain.times(upgradeEffect("ha", 11))
 	}
 	else {
 		if (new Decimal(player.n.upgrades.length).gte(1)) gain = gain.times(player.n.upgrades.length).times(2)

@@ -801,24 +801,26 @@ addLayer("ha", {
         return 0.001;
     },
     gainMult(){
-        return new Decimal(1)
+        let mult = new Decimal(1)
+        if (hasUpgrade("ha", 11)) mult = mult.plus(upgradeEffect("ha", 11))
+        return mult
     },
     upgrades: {
         rows: 10,
         cols: 10,
         11: {
             effect(){
-                return new Decimal(99)
+                return new Decimal(9)
             },
             title: "Hyper Atomic 9",
-            description: "Multiply your Fire gain by 99",
+            description: "Multiply your Hyper Real Atom gain by 9",
             cost: 10
         },
         22: {
             title: "Hyper Atomic Enhancement",
             description: "Hyper Real Atoms boost Void Shard gain",
             effect(){
-                return new Decimal(player.ha.points.plus(1).sqrt().plus(1))
+                return new Decimal(player.ha.points.plus(1).div(5).plus(1))
             },
             effectDisplay(){
                 return `${format(upgradeEffect("ha", 22))}x`

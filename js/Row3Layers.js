@@ -99,7 +99,7 @@ addLayer("po", {
     clickables: {
         11: {
             title() {return "Sacrifice 1"},
-            display() {return `Sacrifice Void Shards to the Portal<br>Total Sacrificed: ${format(player.po.voidShardsSac)}<br>1e12 Required.`},
+            display() {return `Sacrifice Void Shards to the Portal<br>Total Sacrificed: ${format(player.po.voidShardsSac)}<br>50 Million Required.`},
             canClick(){return true},
             onClick(){
                 player.po.voidShardsSac = player.po.voidShardsSac.plus(player.v.points)
@@ -108,7 +108,7 @@ addLayer("po", {
         },
         12: {
             title() {return "Sacrifice 2"},
-            display() {return `Sacrifice Hyper Real Atoms to the Portal<br>Total Sacrificed: ${format(player.po.hyperRealsSac)} <br>200 Required.`},
+            display() {return `Sacrifice Hyper Real Atoms to the Portal<br>Total Sacrificed: ${format(player.po.hyperRealsSac)} <br>700 Required.`},
             canClick(){return true},
             onClick(){
                 player.po.hyperRealsSac = player.po.hyperRealsSac.plus(player.ha.points)
@@ -117,7 +117,7 @@ addLayer("po", {
         },
     },
     update(diff) {
-        if (player.po.voidShardsSac.gte(1e12) && player.po.hyperRealsSac.gte(200))
+        if (player.po.voidShardsSac.gte(5e7) && player.po.hyperRealsSac.gte(700))
             player.po.points = new Decimal(1)
     },
     upgrades: {
