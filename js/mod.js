@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3 Alpha",
+	num: "1.3 Beta 1",
 	name: "[]",
 }
 
@@ -92,8 +92,7 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	`Current Endgame: 2 Awakened Atoms`,
-	`The Real Game Begins after Completing the gwa Layer`,
-	`WARNING: ALPHA. THIS IS BUGFIX VERSION.`
+	`The Real Game Begins after Completing the gwa Layer`
 ]
 
 // Determines when the game "ends"
