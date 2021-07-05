@@ -4,7 +4,8 @@ let modInfo = {
 	author: "FlamemasterNXF",
 	pointsName: "Fire",
 	modFiles: [
-		"tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js", "R1R0Layers.js"
+		"tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js",
+		"R1R0Layers.js", "LoadingLayer.js"
 	],
 
 	discordName: "My Discord server!",
@@ -15,7 +16,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3 Beta 2 Bugfixing",
+	num: "1.3 Beta 2 WIP",
 	name: "[]",
 }
 
@@ -95,7 +96,7 @@ function addedPlayerData() { return {
 var displayThings = [
 	`Current Endgame: 2 Awakened Atoms`,
 	`The Real Game Begins after Completing the gwa Layer`,
-	`Warning: Bugfix Version`
+	`WIP Version`
 ]
 
 // Determines when the game "ends"
@@ -120,4 +121,5 @@ function maxTickLength() {
 // Use this if you need to undo inflation from an older version. If the version is older than the version that fixed the issue,
 // you can cap their current resources with this.
 function fixOldSave(oldVersion){
+	if (player.reality === undefined) player.reality = decimalZero
 }

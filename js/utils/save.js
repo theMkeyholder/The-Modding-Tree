@@ -184,6 +184,11 @@ function fixData(defaultData, newData) {
 		}
 	}
 }
+function startReality(){
+	let previousReality = new Decimal(player.reality)
+	player.reality = new Decimal(-1)
+	setTimeout(() => player.reality = previousReality, 50)
+}
 function load() {
 	let get = localStorage.getItem(modInfo.id);
 
@@ -214,6 +219,7 @@ function load() {
 	updateTemp();
 	updateTabFormats()
 	loadVue();
+	startReality();
 }
 
 function loadOptions() {

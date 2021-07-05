@@ -131,7 +131,7 @@ addLayer("v", {
     resource: "Void Shards", // Name of prestige currency
     baseResource: "Extra Flame", // Name of resource prestige is based on
     canReset() {
-        return hasUpgrade("n", 42) && player.n.points.gte(10000);
+        return (hasUpgrade("n", 42) || hasUpgrade("n", 33)) && player.n.points.gte(10000);
     },
     baseAmount() {
         return player.n.points

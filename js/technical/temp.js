@@ -96,12 +96,12 @@ function updateTemp() {
 	if (tmp === undefined)
 		setupTemp()
 
-	updateActive(layers, tmp, funcs)
 	updateTempData(layers, tmp, funcs)
+	updateActive(layers, tmp, funcs)
 
 	for (layer in layers){
-		if (!tmp[layer].isActive) continue
 		tmp[layer].resetGain = getResetGain(layer)
+		if (!tmp[layer].isActive) continue
 		tmp[layer].nextAt = getNextAt(layer)
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
 		tmp[layer].canReset = canReset(layer)
@@ -132,6 +132,13 @@ function updateActive(layerData, tmpData, funcsData, useThis) {
 				if (useThis !== undefined) value = layerData[item].isActive.bind(useThis)()
 				else value = layerData[item].isActive()
 				Vue.set(tmpData[item], "isActive", value)
+			}
+			if (isFunction(layerData[item].layerShown) && !(isFunction(tmpData[item].layerShown))) {
+				let value
+
+				if (useThis !== undefined) value = layerData[item].layerShown.bind(useThis)()
+				else value = layerData[item].layerShown()
+				Vue.set(tmpData[item], "layerShown", value)
 			}
 		}
 	}
