@@ -147,6 +147,7 @@ function updateActive(layerData, tmpData, funcsData, useThis) {
 
 function updateTempData(layerData, tmpData, funcsData, useThis) {
 for (item in funcsData) {
+	if (tmpData[item] && tmp[item] === undefined) continue
 	if (tmpData[item] && tmp[item].isActive === false) continue
 	if (Array.isArray(layerData[item])) {
 		if (item !== "tabFormat" && item !== "content") // These are only updated when needed
