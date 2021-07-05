@@ -44,8 +44,9 @@ addLayer("p", {
     },
     branches: ["sp"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
+    isActive(){ return inReality(0) },
     layerShown() {
-        return ((hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
+        return (((hasUpgrade("vg", 21) || new Decimal(player.sp.points).gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))) && temp.p.isActive
     },
     update(diff){
         let gain = new Decimal(0)
@@ -222,8 +223,9 @@ addLayer("sp", {
             }
         },
     ],
+    isActive(){ return inReality(0) },
     layerShown() {
-        return ((hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
+        return (((hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))) && temp.sp.isActive
     },
     milestones: {
         0: {
@@ -392,8 +394,9 @@ addLayer("up", {
             }
         },
     ],
+    isActive(){ return inReality(0) },
     layerShown() {
-        return (hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11))  && !(hasMilestone("r", 0))
+        return ((hasUpgrade("vg", 21) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11))  && !(hasMilestone("r", 0))) && temp.up.isActive
     },
     milestones: {
         0: {
@@ -503,8 +506,9 @@ addLayer("m", {
     },
     branches: [""],
     row: 0, // Row the layer is in on the tree (0 is the first row)
+    isActive(){ return inReality(0) },
     layerShown() {
-        return inChallenge("up", 11) && !hasUpgrade("m", 11)
+        return (inChallenge("up", 11) && !hasUpgrade("m", 11))  && temp.m.isActive
     },
     update(diff){
         let gain = new Decimal(0)

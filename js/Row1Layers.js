@@ -39,8 +39,9 @@ addLayer("g", {
         },
     ],
     layerShown() {
-        return (!hasUpgrade("g", 21)) && !inChallenge("up", 11)
+        return ((!hasUpgrade("g", 21)) && !inChallenge("up", 11))  && temp.g.isActive
     },
+    isActive(){ return inReality(0) },
     doReset(resettingLayer){
         switch(resettingLayer) {
             case "sp": false; break;
@@ -168,8 +169,9 @@ addLayer("v", {
         },
     ],
     layerShown() {
-        return hasUpgrade("g", 21) && !inChallenge("up", 11)
+        return (hasUpgrade("g", 21) && !inChallenge("up", 11)) && temp.v.isActive
     },
+    isActive(){ return inReality(0) },
     update(diff) {
         if (player.v.points.equals(0) && hasUpgrade("g", 21)){
             player.v.points = player.v.points.plus(1)
@@ -309,8 +311,9 @@ addLayer("a", {
             }
         },
     ],
+    isActive(){ return inReality(0) },
     layerShown() {
-        return (hasUpgrade("g", 21) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
+        return ((hasUpgrade("g", 21) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))) && temp.a.isActive
     },
     update(diff){
         if(player.a.points.gt(7)){
@@ -499,8 +502,9 @@ addLayer("o", {
             }
         },
     ],
+    isActive(){ return inReality(0) },
     layerShown() {
-        return ((hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
+        return (((hasUpgrade("a", 12) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))) && temp.o.isActive
     },
     upgrades: {
         rows: 10,
@@ -728,8 +732,9 @@ addLayer("vg", {
     },
     branches: ["p"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
+    isActive(){ return inReality(0) },
     layerShown() {
-        return (((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !hasMilestone("r", 0)
+        return ((((hasUpgrade("o", 31) || player.vg.points.gte(1)) || player.sp.points.gte(1) || player.up.points.gte(1) || hasUpgrade("sp", 11)) && !inChallenge("up", 11)) && !hasMilestone("r", 0)) && temp.vg.isActive
     },
     upgrades: {
         rows: 3,
@@ -791,9 +796,6 @@ addLayer("ha", {
     type: "normal", // normal: costeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee to gain currency depends on amount gained. static: cost depends on how much you already have
     branches: ["r"],
     row: 1, // Row the layer is in on the tree (0 is the first row)
-    layerShown() {
-        return hasMilestone("r", 0)
-    },
     passiveGeneration() {
         return hasMilestone("r", 0);
     },
@@ -804,6 +806,10 @@ addLayer("ha", {
         let mult = new Decimal(1)
         if (hasUpgrade("ha", 11)) mult = mult.plus(upgradeEffect("ha", 11))
         return mult
+    },
+    isActive(){ return inReality(0) },
+    layerShown() {
+        return hasMilestone("r", 0) && temp.ha.isActive
     },
     upgrades: {
         rows: 10,

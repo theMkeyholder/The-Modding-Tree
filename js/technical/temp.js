@@ -96,9 +96,11 @@ function updateTemp() {
 	if (tmp === undefined)
 		setupTemp()
 
+	updateActive(layers, tmp, funcs)
 	updateTempData(layers, tmp, funcs)
 
 	for (layer in layers){
+		if (!tmp[layer].isActive) continue
 		tmp[layer].resetGain = getResetGain(layer)
 		tmp[layer].nextAt = getNextAt(layer)
 		tmp[layer].nextAtDisp = getNextAt(layer, true)
@@ -121,38 +123,49 @@ function updateTemp() {
 	}
 }
 
+function updateActive(layerData, tmpData, funcsData, useThis) {
+	for (item in funcsData) {
+		if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)) {
+			if (isFunction(layerData[item].isActive) && !(isFunction(tmpData[item].isActive))) {
+				let value
+
+				if (useThis !== undefined) value = layerData[item].isActive.bind(useThis)()
+				else value = layerData[item].isActive()
+				Vue.set(tmpData[item], "isActive", value)
+			}
+		}
+	}
+}
+
+
 function updateTempData(layerData, tmpData, funcsData, useThis) {
-	for (item in funcsData){
-		if (Array.isArray(layerData[item])) {
-			if (item !== "tabFormat" && item !== "content") // These are only updated when needed
-				updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
-		}
-		else if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)){
+for (item in funcsData) {
+	if (tmpData[item] && tmp[layer].isActive === false) continue
+	if (Array.isArray(layerData[item])) {
+		if (item !== "tabFormat" && item !== "content") // These are only updated when needed
 			updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
-		}
-		else if (isFunction(layerData[item]) && !isFunction(tmpData[item])){
-			let value
+	} else if ((!!layerData[item]) && (layerData[item].constructor === Object) || (typeof layerData[item] === "object") && traversableClasses.includes(layerData[item].constructor.name)) {
+		updateTempData(layerData[item], tmpData[item], funcsData[item], useThis)
+	} else if (isFunction(layerData[item]) && !isFunction(tmpData[item])) {
+		let value
 
 			if (useThis !== undefined) value = layerData[item].bind(useThis)()
 			else value = layerData[item]()
 			Vue.set(tmpData, item, value)
 		}
-	}	
+	}
 }
 
-function updateChallengeTemp(layer)
-{
+function updateChallengeTemp(layer) {
 	updateTempData(layers[layer].challenges, tmp[layer].challenges, funcs[layer].challenges)
 }
 
 
-function updateBuyableTemp(layer)
-{
+function updateBuyableTemp(layer) {
 	updateTempData(layers[layer].buyables, tmp[layer].buyables, funcs[layer].buyables)
 }
 
-function updateClickableTemp(layer)
-{
+function updateClickableTemp(layer) {
 	updateTempData(layers[layer].clickables, tmp[layer].clickables, funcs[layer].clickables)
 }
 
@@ -161,12 +174,12 @@ function setupBuyables(layer) {
 		if (isPlainObject(layers[layer].buyables[id])) {
 			let b = layers[layer].buyables[id]
 			b.actualCostFunction = b.cost
-			b.cost = function(x) {
+			b.cost = function (x) {
 				x = (x === undefined ? player[this.layer].buyables[this.id] : x)
 				return layers[this.layer].buyables[this.id].actualCostFunction(x)
 			}
 			b.actualEffectFunction = b.effect
-			b.effect = function(x) {
+			b.effect = function (x) {
 				x = (x === undefined ? player[this.layer].buyables[this.id] : x)
 				return layers[this.layer].buyables[this.id].actualEffectFunction(x)
 			}

@@ -13,7 +13,11 @@ var LAYERS = Object.keys(layers);
 var hotkeys = {};
 
 var maxRow = 0;
-
+//mine lo
+function inReality(reality) {
+    return player.reality.equals(reality)
+}
+//end of mine lo
 function updateHotkeys()
 {
     hotkeys = {};
@@ -187,6 +191,7 @@ function setupLayer(layer){
     if(layers[layer].displayRow === undefined) layers[layer].displayRow = layers[layer].row
     if(layers[layer].name === undefined) layers[layer].name = layer
     if(layers[layer].layerShown === undefined) layers[layer].layerShown = true
+    if(layers[layer].isActive === undefined) layers[layer].isActive = true
     if(layers[layer].glowColor === undefined) layers[layer].glowColor = "#ff0000"
 
     let row = layers[layer].row

@@ -50,6 +50,7 @@ function achievementStyle(layer, id){
 
 
 function updateWidth() {
+	if (player.tab !== "none" && !tmp[player.tab].layerShown) player.tab = "none"
 	let screenWidth = window.innerWidth
 	let splitScreen = screenWidth >= 1024
 	if (options.forceOneTab) splitScreen = false

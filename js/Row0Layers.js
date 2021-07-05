@@ -42,8 +42,9 @@ addLayer("g2", {
         return false
     },
     row: 96, // Row the layer is in on the tree (0 is the first row)
+    isActive(){ return inReality(0) },
     layerShown() {
-        return (hasUpgrade("g", 21)) && !inChallenge("up", 11)
+        return ((hasUpgrade("g", 21)) && !inChallenge("up", 11)) && temp.g2.isActive
     },
     upgrades: {
         rows: 3,
@@ -117,8 +118,9 @@ addLayer("n", {
             }
         },
     ],
+    isActive(){ return inReality(0) },
     layerShown() {
-        return (!inChallenge("up", 11))
+        return !inChallenge("up", 11) && temp.n.isActive
     },
     upgrades: {
         rows: 4,

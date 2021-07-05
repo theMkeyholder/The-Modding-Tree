@@ -3,17 +3,19 @@ let modInfo = {
 	id: "flametreetest",
 	author: "FlamemasterNXF",
 	pointsName: "Fire",
-	modFiles: ["tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js"],
+	modFiles: [
+		"tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js", "R1R0Layers.js"
+	],
 
 	discordName: "My Discord server!",
 	discordLink: "https://discord.gg/Js93DSjBAY",
-	initialStartPoints: new Decimal (1), // Used for hard resets and new players
+	initialStartPoints: new Decimal (1), // Used for hard resets and new playerse
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "1.3 Beta 1",
+	num: "1.3 Beta 2 Bugfixing",
 	name: "[]",
 }
 
@@ -86,12 +88,14 @@ function getPointGen() {
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+	reality: decimalZero
 }}
 
 // Display extra things at the top of the page
 var displayThings = [
 	`Current Endgame: 2 Awakened Atoms`,
-	`The Real Game Begins after Completing the gwa Layer`
+	`The Real Game Begins after Completing the gwa Layer`,
+	`Warning: Bugfix Version`
 ]
 
 // Determines when the game "ends"

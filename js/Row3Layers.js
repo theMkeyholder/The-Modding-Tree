@@ -33,7 +33,7 @@ addLayer("r", {
     branches: [],
     row: 3, // Row the layer is in on the tree (0 is the first row)
     layerShown() {
-        return player.aa.points.gte(2)|| player.r.total.gte(1)
+        return player.aa.points.gte(2)|| player.r.best.gte(1) || hasUpgrade("r", 11)
     },
     update(diff){
       if (hasUpgrade("r", 11) && !hasChallenge("a", 11) | !hasChallenge("a", 12)){

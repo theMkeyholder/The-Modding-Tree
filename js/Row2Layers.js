@@ -29,8 +29,9 @@ addLayer("as", {
     },
     branches: ["aa"],
     row: 2, // Row the layer is in on the tree (0 is the first row)
+    isActive(){ return inReality(0) },
     layerShown() {
-        return ((hasUpgrade("a", 12) || hasMilestone("r", 0)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
+        return (((hasUpgrade("a", 12) || hasMilestone("r", 0)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))) && temp.as.isActive
     },
     effect(){
         if (!hasUpgrade("aa", 11))
@@ -146,8 +147,9 @@ addLayer("aa", {
             }
         },
     ],
+    isActive(){ return inReality(0) },
     layerShown() {
-        return ((hasChallenge("a", 12) || player.aa.total.gte(1)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0))
+        return (((hasChallenge("a", 12) || player.aa.total.gte(1)) && !inChallenge("up", 11)) && !(hasMilestone("r", 0)))  && temp.aa.isActive
     },
     effect(){
         if (player.aa.points.gte(1))
