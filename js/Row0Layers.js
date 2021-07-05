@@ -251,7 +251,7 @@ addLayer("n", {
             }
         },
         42: {
-            unlocked(){return hasUpgrade("n", 33)},
+            unlocked(){return hasUpgrade("n", 33) || player.n.isActive},
             title: "Lol the previous upgrade is a obvious nerf to prevent inflation!! (trolled!)",
             description: "Unlock a new layer because this one is boring now",
             cost: 1
