@@ -5,7 +5,7 @@ let modInfo = {
 	pointsName: "Fire",
 	modFiles: [
 		"tree.js", "Row0Layers.js", "Row1Layers.js", "Row2Layers.js", "HellLayers.js", "Row3Layers.js",
-		"R1R0Layers.js", "LoadingLayer.js"
+		"R1R0Layers.js", "LoadingLayer.js", "R96.js"
 	],
 
 	discordName: "My Discord server!",

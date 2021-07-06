@@ -32,8 +32,9 @@ addLayer("r", {
     resetDescription: "Collapse your Reality for ",
     branches: [],
     row: 3, // Row the layer is in on the tree (0 is the first row)
+    isActive(){ return inReality(0) },
     layerShown() {
-        return player.aa.points.gte(2)|| player.r.best.gte(1) || hasUpgrade("r", 11)
+        return (player.aa.points.gte(2)|| player.r.best.gte(1) || hasUpgrade("r", 11)) && tmp.r.isActive
     },
     update(diff){
       if (hasUpgrade("r", 11) && !hasChallenge("a", 11) | !hasChallenge("a", 12)){
@@ -98,6 +99,7 @@ addLayer("po", {
     },
     clickables: {
         11: {
+            unlocked() { return !hasUpgrade("po", 11)},
             title() {return "Sacrifice 1"},
             display() {return `Sacrifice Void Shards to the Portal<br>Total Sacrificed: ${format(player.po.voidShardsSac)}<br>50 Million Required.`},
             canClick(){return true},
@@ -107,12 +109,24 @@ addLayer("po", {
             },
         },
         12: {
+            unlocked() { return !hasUpgrade("po", 11)},
             title() {return "Sacrifice 2"},
             display() {return `Sacrifice Hyper Real Atoms to the Portal<br>Total Sacrificed: ${format(player.po.hyperRealsSac)} <br>700 Required.`},
             canClick(){return true},
             onClick(){
                 player.po.hyperRealsSac = player.po.hyperRealsSac.plus(player.ha.points)
                 player.ha.points = player.ha.points.sub(player.ha.points)
+            },
+        },
+        21: {
+            unlocked() {
+                return hasUpgrade("po", 11);
+            },
+            title() {return "Go to the Gateway"},
+            display() {return `Reality 96`},
+            canClick(){return true},
+            onClick(){
+                player.reality = new Decimal(96)
             },
         },
     },
@@ -124,6 +138,7 @@ addLayer("po", {
         rows: 10,
         cols: 10,
         11: {
+            unlocked() { return !hasUpgrade("po", 11)},
             title: "Open the Portal.",
             cost: 1,
         },
