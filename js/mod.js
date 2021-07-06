@@ -80,6 +80,8 @@ function getPointGen() {
 		if (hasUpgrade("v", 12)) gain = gain.div(upgradeEffect("v", 12))
 		if (hasUpgrade("v", 13)) gain = gain.div(upgradeEffect("v", 13))
 		if (hasUpgrade("v", 14)) gain = gain.div(upgradeEffect("v", 14))
+		if (hasUpgrade("a", 21)) gain = gain.times(upgradeEffect("a", 21))
+		if (hasUpgrade("a", 22)) gain = gain.times(upgradeEffect("a", 22))
 		if (hasUpgrade("a", 23)) gain = gain.times(upgradeEffect("a", 23))
 		if (player.aa.points.gte(1)) gain = gain.times(tmp.aa.effect)
 		if (hasUpgrade("r", 21)) gain = gain.times(upgradeEffect("r", 21))
